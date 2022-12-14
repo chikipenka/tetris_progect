@@ -16,7 +16,7 @@ orientation = ['straight', 'left', 'right', 'bottom']
 
 
 class figures:
-    def __init__(self, type, left_side, type):
+    def __init__(self, type, left_side):
         if type == 'square':
             self.coordinates = [[-1, left_side], [-1, left_side + 1], [0, left_side], [0, left_side + 1]]
         if type == 'left_z_figure':
