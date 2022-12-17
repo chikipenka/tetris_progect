@@ -17,19 +17,34 @@ orientation = ['straight', 'left', 'right', 'bottom']
 class figures:
     def __init__(self, type, left_side):
         if type == 'square':
-            self.coordinates = [[-1, left_side], [-1, left_side + 1], [0, left_side], [0, left_side + 1]]
+            self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side, 0], [left_side + 1, 0]]
         if type == 'left_z_figure':
-            self.coordinates = [[-1, left_side], [-1, left_side + 1], [0, left_side + 1], [0, left_side + 2]]
+            self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 1, 0], [left_side + 2, 0]]
         if type == 'right_z_figure':
-            self.coordinates = [[0, left_side], [0, left_side + 1], [-1, left_side + 1], [0, left_side + 1]]
+            self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side + 1, -1], [left_side + 2, -1]]
         if type == 'left_l_figure':
-            self.coordinates = [[0, left_side], [0, left_side + 1], [-1, left_side + 1], [-2, left_side + 1]]
+            self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side + 1, -1], [left_side + 1, -2]]
         if type == 'right_l_figure':
-            self.coordinates = [[0, left_side], [0, left_side+1], [-1, left_side], [-2, left_side]]
+            self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side, -1], [left_side, -2]]
         if type == 't_figure':
-            self.coordinates = [[-1, left_side], [-1, left_side+1], [-1, left_side + 2], [0, left_side + 1]]
+            self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 2, -1], [left_side + 1, 0]]
         if type == 'stick':
-            self.coordinates = [[-3, left_side], [-2, left_side+1], [-1, left_side], [0, left_side]]
+            self.coordinates = [[left_side, -3], [left_side, -2], [left_side, -1], [left_side, 0]]
+
+    def __move__(self):
+        for i in range(len(self.coordinates)):
+            if self.coordinates[i][1] < 19:
+                self.coordinates[i][1] += 1
+
+    def __move_right__(self):
+        for i in range(len(self.coordinates)):
+            if self.coordinates[i][0] < 9:
+                self.coordinates[i][0] += 1
+
+    def __move_left__(self):
+        for i in range(len(self.coordinates)):
+            if self.coordinates[i][0] > 0:
+                self.coordinates[i][0] += 1
 
 
 print('Huy')
