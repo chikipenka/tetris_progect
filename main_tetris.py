@@ -4,7 +4,6 @@ from random import randint
 
 pygame.init()
 
-number_of_balls = 10  # количество шаров
 FPS = 100
 
 width = 1200
@@ -48,5 +47,5 @@ class figures:
                 self.coordinates[i][0] += 1
 
 
-
+print('Huy')
 pygame.quit()
