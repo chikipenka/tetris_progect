@@ -1,6 +1,6 @@
 import pygame
 from pygame.draw import *
-from random import randint
+from random import *
 
 pygame.init()
 
@@ -29,6 +29,7 @@ xx, yy = 100, 100 # вставить реальные значения коор�
 
 types = ['square', 'left_z_figure', 'right_z_figure', 'left_l_figure', 'right_l_figure', 't_figure', 'stick']
 orientation = ['straight', 'left', 'right', 'bottom']
+print(choice(types))
 
 
 class figures:
@@ -40,13 +41,13 @@ class figures:
         if type == 'right_z_figure':
             self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side + 1, -1], [left_side + 2, -1]]
         if type == 'left_l_figure':
-            self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side + 1, -1], [left_side + 1, -2]]
+            self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 2, -1], [left_side + 2, 0]]
         if type == 'right_l_figure':
-            self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side, -1], [left_side, -2]]
+            self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 2, -1], [left_side, 0]]
         if type == 't_figure':
             self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 2, -1], [left_side + 1, 0]]
         if type == 'stick':
-            self.coordinates = [[left_side, -3], [left_side, -2], [left_side, -1], [left_side, 0]]
+            self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side + 2, 0], [left_side + 3, 0]]
 
     def __move__(self):
         for i in range(len(self.coordinates)):
@@ -88,7 +89,7 @@ def kvadratic_bigblik(x, y, a, i):
 
 # a - ребро квадратика, нужно будет определить и поменять
 # xx, yy - координаты  левого верхнего угла игрового окнa
-def kvadratic(x, y):
+def kvadratic(x, y, a):
     """ x_1, y_1 - координаты левого верхнего угла,
      n, m - координаты квадратика в игровом поле, выраженные через число квадратиков
      x, y - координаты квадратика в игровом окне"""
@@ -96,6 +97,24 @@ def kvadratic(x, y):
     m = (y - yy)/a
 
     return n, m
+
+figure_list = list()
+clock = pygame.time.Clock()
+finished = False
+time_counter = 0
+while not finished:
+    clock.tick(FPS)
+    pygame.display.update()
+    time_counter += 1
+    if time_counter % 100 == 0:
+        figure_list.append(figures(choice(types), 4))
+        print(figure_list)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            finished = True
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_ESCAPE:
+                finished = True
 
 print('Huy')
 pygame.quit()
