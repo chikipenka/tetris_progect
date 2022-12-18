@@ -30,10 +30,12 @@ def kvadratic_blik(x, y, a, i):
         pygame.draw.rect(screen, WHITE, (x+2*a/10+5, y+a/10+5, a/10, a/10))
         pygame.draw.rect(screen, WHITE, (x+a/10+5, y+2*a/10+5, a/10, a/10))
         pygame.draw.rect(screen, WHITE, (x+5, y+5, a/10, a/10))
-    elif yy>y>(yy-a)
+    elif yy>y>(yy-a):
         colors = COLORS[i]
-        pygame.draw.rect(screen, colors[randint(0, 1)], (x, yy, a, a-(yy-y))
+        pygame.draw.rect(screen, colors[randint(0, 1)], (x, yy, a, a-(yy-y)))
         pygame.draw.rect(screen, BLACK, (x, y, a, a), 5)
+        if y>=yy-a/10:
+            pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
         pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
         pygame.draw.rect(screen, WHITE, (x + 2 * a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
         pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + 2 * a / 10 + 5, a / 10, a / 10))
