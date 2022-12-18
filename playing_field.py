@@ -43,8 +43,8 @@ screen.fill((15, 10, 30))
 
 # Create a font file by passing font file
 # and size of the font
-font1 = pygame.font.SysFont("Arial.ttf", 24, bold=True)
-font2 = pygame.font.SysFont("Arial.ttf", 28, bold=True)
+font1 = pygame.font.SysFont("Courier New", 24, bold=True)
+font2 = pygame.font.SysFont("Courier New", 28, bold=True)
 
 
 def scorer_draw(scr, clr, font):
@@ -74,7 +74,7 @@ def LINE_draw(line, clr, font):
 def NickName(nn, clr, font):
     Text = font.render(str(nn), True, clr)
     TextRect = Text.get_rect()
-    TextRect.center = (290 / 405 * w, 600 / 630 * h)
+    TextRect.center = (290 / 405 * w, 595 / 630 * h)
     screen.blit(Text, TextRect)
 
 def drawer():
