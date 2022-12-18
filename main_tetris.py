@@ -128,16 +128,13 @@ def kvadratic_bigblik(x, y, a, i):
     pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
 # a - ребро квадратика, нужно будет определить и поменять
 # xx, yy - координаты  левого верхнего угла игрового окнa
-def kvadratic(x, y, a):
+def kvadratic(n, m, a):
     """ x_1, y_1 - координаты левого верхнего угла,
      n, m - координаты квадратика в игровом поле, выраженные через число квадратиков
      x, y - координаты квадратика в игровом окне"""
-    n = (x - xx)/a
-    m = (y - yy)/a
-
-    n = (x - xx) / a
-    m = (y - yy) / a
-    return n, m
+    x = xx + n*a
+    y = yy + m*a
+    return x, y
 
 
 def scorer_draw(scr, clr, font):
