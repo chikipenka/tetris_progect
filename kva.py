@@ -22,7 +22,7 @@ def kvadratic_blik(x, y, a, i):
     ''' i - номер в массиве, который зависит от уровня
     и x пусть меняется от xx до xx+ширина игрового окна
     '''
-    if y>=yy:
+    if y>= yy:
         colors = COLORS[i]
         pygame.draw.rect(screen, colors[randint(0,1)], (x, y, a, a))
         pygame.draw.rect(screen, BLACK, (x, y, a, a), 5)
