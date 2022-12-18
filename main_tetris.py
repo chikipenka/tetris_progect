@@ -37,7 +37,7 @@ clr3 = (255, 255, 255)
 
 screen = pygame.display.set_mode((width, height))
 
-square_side = 22 / 405 * width
+square_side = 21 / 405 * width
 BLUE = (65, 105, 225)
 RED = (139, 0, 0)
 BLACK = (0, 0, 0)
@@ -186,16 +186,16 @@ def nick_name(nn, clr, font):
         функция выводит на экран в нужной ячейке никнейм заданым цветом и шрифтом"""
     Text = font.render(str(nn), True, clr)
     TextRect = Text.get_rect()
-    TextRect.center = (290 / 405 * width, 595 / 630 * height)
+    TextRect.center = (290 / 405 * width, 600 / 630 * height)
     screen.blit(Text, TextRect)
 
 
 def drawer():
     """"функция отрисовки игрового поля"""
     # feild
-    rect(screen, clr1, (180 / 405 * width, 125 / 630 * height, 220 / 405 * width, 440 / 630 * height), 5)
-    rect(screen, clr2, (182 / 405 * width, 129 / 630 * height, 216 / 405 * width, 434 / 630 * height), 2)
-    rect(screen, clr2, (181 / 405 * width, 126 / 630 * height, 218 / 405 * width, 438 / 630 * height), 1)
+    rect(screen, clr1, (180 / 405 * width, 125 / 630 * height, 220 / 405 * width, 446 / 630 * height), 5)
+    rect(screen, clr2, (182 / 405 * width, 129 / 630 * height, 216 / 405 * width, 440 / 630 * height), 2)
+    rect(screen, clr2, (181 / 405 * width, 126 / 630 * height, 218 / 405 * width, 444 / 630 * height), 1)
     # LINE
     text1 = font1.render('LINE', True, clr3)
     textRect1 = text1.get_rect()
@@ -233,9 +233,9 @@ def drawer():
     rect(screen, clr2, (83 / 405 * width, 488 / 630 * height, (95 - x1) / 405 * width, (70 - y1) / 630 * height), 2)
     rect(screen, clr2, (81 / 405 * width, 486 / 630 * height, (95 - x2) / 405 * width, (70 - y2) / 630 * height), 1)
     # Nickname
-    rect(screen, clr1, (180 / 405 * width, 570 / 630 * height, 220 / 405 * width, 55 / 630 * height), 5)
-    rect(screen, clr2, (182 / 405 * width, 573 / 630 * height, (220 - x1) / 405 * width, (55 - y1) / 630 * height), 2)
-    rect(screen, clr2, (181 / 405 * width, 571 / 630 * height, (220 - x2) / 405 * width, (55 - y2) / 630 * height), 1)
+    rect(screen, clr1, (180 / 405 * width, 576 / 630 * height, 220 / 405 * width, 49 / 630 * height), 5)
+    rect(screen, clr2, (182 / 405 * width, 579 / 630 * height, (220 - x1) / 405 * width, (49 - y1) / 630 * height), 2)
+    rect(screen, clr2, (181 / 405 * width, 577 / 630 * height, (220 - x2) / 405 * width, (49 - y2) / 630 * height), 1)
     # Flag
     rect(screen, clr1, (80 / 405 * width, 560 / 630 * height, 95 / 405 * width, 64 / 630 * height), 5)
     rect(screen, clr2, (83 / 405 * width, 563 / 630 * height, (95 - x1) / 405 * width, (63 - y1) / 630 * height), 2)
@@ -271,7 +271,7 @@ while not finished:
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
-                                                             square_side, 180 / 405 * width, 125 / 630 * height)
+                                                             square_side, 185 / 405 * width, 130 / 630 * height)
             if fig[1] == 0:
                 kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 0)
             elif fig[1] == 1:
