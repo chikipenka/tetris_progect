@@ -16,17 +16,28 @@ GREEN = (0, 255, 26)
 FGREN = (35, 185, 105)
 MALINA = (185, 35, 130)
 COLORS = [[BLUE, RED], [PURPLE, DPURPLE], [RED, YELLOW], [BLUWUE, BLUE], [GREN, GREENY], [PURPLE, PINK], [BLUE, GREEN], [MALINA, FGREN]]
+xx, yy = 100, 100 # вставить реальные значения
 
 def kvadratic_blik(x, y, a, i):
-    ''' i - номер в массиве, который зависит от уровня'''
-    colors = COLORS[i]
-    pygame.draw.rect(screen, colors[randint(0,1)], (x, y, a, a))
-    pygame.draw.rect(screen, BLACK, (x, y, a, a), 5)
-    pygame.draw.rect(screen, WHITE, (x+a/10+5, y+a/10+5, a/10, a/10))
-    pygame.draw.rect(screen, WHITE, (x+2*a/10+5, y+a/10+5, a/10, a/10))
-    pygame.draw.rect(screen, WHITE, (x+a/10+5, y+2*a/10+5, a/10, a/10))
-    pygame.draw.rect(screen, WHITE, (x+5, y+5, a/10, a/10))
-
+    ''' i - номер в массиве, который зависит от уровня
+    и x пусть меняется от xx до xx+ширина игрового окна
+    '''
+    if y>=yy:
+        colors = COLORS[i]
+        pygame.draw.rect(screen, colors[randint(0,1)], (x, y, a, a))
+        pygame.draw.rect(screen, BLACK, (x, y, a, a), 5)
+        pygame.draw.rect(screen, WHITE, (x+a/10+5, y+a/10+5, a/10, a/10))
+        pygame.draw.rect(screen, WHITE, (x+2*a/10+5, y+a/10+5, a/10, a/10))
+        pygame.draw.rect(screen, WHITE, (x+a/10+5, y+2*a/10+5, a/10, a/10))
+        pygame.draw.rect(screen, WHITE, (x+5, y+5, a/10, a/10))
+    elif yy>y>(yy-a)
+        colors = COLORS[i]
+        pygame.draw.rect(screen, colors[randint(0, 1)], (x, yy, a, a-(yy-y))
+        pygame.draw.rect(screen, BLACK, (x, y, a, a), 5)
+        pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
+        pygame.draw.rect(screen, WHITE, (x + 2 * a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
+        pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + 2 * a / 10 + 5, a / 10, a / 10))
+        pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
 def kvadratic_bigblik(x, y, a, i):
     ''' i - номер в массиве, который зависит от уровня'''
     colors = COLORS[i]
