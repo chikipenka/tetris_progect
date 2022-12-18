@@ -108,26 +108,31 @@ def kvadratic_blik(x, y, a, i, color_type):
     y строго от yy
     '''
     colors = COLORS[i]
-    pygame.draw.rect(screen, colors[color_type], (x, y, a, a))
-    pygame.draw.rect(screen, BLACK, (x, y, a, a), 2)
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 2 * a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + 2 * a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 2 * a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + 2 * a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
+    d = int(a//10)
+    pygame.draw.rect(screen, colors[1], (x, y, a, a))
+    pygame.draw.rect(screen, colors[0], (x, y, a, a))
+    pygame.draw.rect(screen, BLACK, (x, y, a, a), d)
+    pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, d, d))
+    pygame.draw.rect(screen, WHITE, (x + 2 * d + d, y + d + d, d, d))
+    pygame.draw.rect(screen, WHITE, (x + d + d, y + 2 * d + d, d, d))
+    pygame.draw.rect(screen, WHITE, (x + d, y + d, d, d))
+    pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, d, d))
+    pygame.draw.rect(screen, WHITE, (x + 2 * d + d, y + d + d, d, d))
+    pygame.draw.rect(screen, WHITE, (x + d + d, y + 2 * d + d, d, d))
+    pygame.draw.rect(screen, WHITE, (x + d, y + d, d, d))
 
 
 def kvadratic_bigblik(x, y, a, i):
     ''' i - номер в массиве, который зависит от уровня'''
     colors = COLORS[i]
+    d = int(a//10)
     pygame.draw.rect(screen, colors[0], (x, y, a, a))
+    pygame.draw.rect(screen, BLACK, (x, y, a, a), d)
+    pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, a - 2*d - 2*d, a - 2*d - 2*d))
+    pygame.draw.rect(screen, WHITE, (x + d, y + d, d, d))
     pygame.draw.rect(screen, BLACK, (x, y, a, a), 2)
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a - a / 5 - 10, a - a / 5 - 10))
-    pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
-
+    pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, a - 2*d - 2*d, a - 2*d - 2*d))
+    pygame.draw.rect(screen, WHITE, (x + d, y + d, d, d))
 
 # a - ребро квадратика, нужно будет определить и поменять
 # xx, yy - координаты  левого верхнего угла игрового окнa
