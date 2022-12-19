@@ -366,6 +366,19 @@ while not finished:
                         if left_rotate_trigger:
                             figure_list[-1][0].orientation += 1
                             figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 1, figure_list[-1][0].coordinates[0][1] - 1]
+                    elif figure_list[-1][0].orientation % 4 == 1:
+                        if collision_list[figure_list[-1][0].coordinates[1][0] - 1][figure_list[-1][0].coordinates[1][1]] == 1:
+                            left_rotate_trigger = False
+                        if left_rotate_trigger:
+                            figure_list[-1][0].orientation += 1
+                            figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[1][0]-1, figure_list[-1][0].coordinates[1][1]]
+                    elif figure_list[-1][0].orientation % 4 == 2:
+                        if collision_list[figure_list[-1][0].coordinates[1][0]][figure_list[-1][0].coordinates[1][1] + 1] == 1:
+                            left_rotate_trigger = False
+                        if left_rotate_trigger:
+                            figure_list[-1][0].orientation += 1
+                            figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[1][0],
+                                                                 figure_list[-1][0].coordinates[1][1] - 2]
 
 
 
