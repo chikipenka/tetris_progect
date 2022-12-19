@@ -1,6 +1,6 @@
 import time
-
 import pygame
+import keyboard
 from pygame.draw import *
 from random import *
 
@@ -116,9 +116,11 @@ class figures:
         if left_move_trigger:
             for elem in (self.coordinates):
                 elem[0] -= 1
+
     def __move_down__(self):
         for elem in self.coordinates:
             elem[1] += 1
+
 
 def kvadratic_blik(x, y, a, i, color_type):
     ''' i - номер в массиве, который зависит от уровня
@@ -281,8 +283,13 @@ for i in range(len(collision_list)):
 for i in range(len(collision_list)):
     print(collision_list[i])
 print(collision_list[0][12])
-
+fast_move_down_trigger = False
+fast_move_down_tick = 0
+fast_move_left_tick = 0
+fast_move_right_tick = 0
+previous_statick_figure_list_len = 0
 while not finished:
+    current_statick_figure_list_len = len(static_figure_list)
     drawer()
     scorer_draw(score, clr3, font1)
     lvlup_draw(LVL, clr3, font2)
@@ -291,7 +298,7 @@ while not finished:
     nick_name(nick_n, clr3, font1)
     clock.tick(FPS)
     time_counter += 1
-    level_color = 2
+    level_color = 1
     if time_counter == 20:
         current_type = choice(types)
         if current_type == 'square':
@@ -328,15 +335,19 @@ while not finished:
                     figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
                 else:
                     figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finished = True
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_ESCAPE:
                 finished = True
+            if event.key == pygame.K_DOWN:
+                fast_move_down_trigger = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
+                fast_move_left_trigger = True
+                fast_move_left_tick = time.time()
+                left_time_tick = time.time()
                 move_left_trigger2 = True
                 for square in figure_list[-1][0].coordinates:
                     if collision_list[square[0]][square[1]] == 1:
@@ -344,46 +355,49 @@ while not finished:
                 if move_left_trigger2:
                     figure_list[-1][0].__move_left__()
             if event.key == pygame.K_RIGHT:
+                fast_move_right_tick = time.time()
                 move_right_trigger2 = True
                 for square in figure_list[-1][0].coordinates:
-                    if collision_list[square[0]+2][square[1]] == 1:
+                    if collision_list[square[0] + 2][square[1]] == 1:
                         move_right_trigger2 = False
                 if move_right_trigger2:
                     figure_list[-1][0].__move_right__()
+            figure_list_len = len(figure_list)
             if event.key == pygame.K_DOWN:
-                move_down_trigger2 = True
-                for square in figure_list[-1][0].coordinates:
-                    if collision_list[square[0] + 1][square[1] + 1] == 1:
-                        move_down_trigger2 = False
-                if move_down_trigger2:
-                    figure_list[-1][0].__move_down__()
-            if event.key == pygame.K_m:
-                left_rotate_trigger = True
-                if figure_list[-1][0].type == 't_figure':
-                    if figure_list[-1][0].orientation % 4 == 0:
-                        if collision_list[figure_list[-1][0].coordinates[1][0]][figure_list[-1][0].coordinates[1][0] + 1] == 1 or collision_list[figure_list[-1][0].coordinates[1][0]][figure_list[-1][0].coordinates[1][0] - 1]  == 1:
-                            left_rotate_trigger = False
-                        if left_rotate_trigger:
-                            figure_list[-1][0].orientation += 1
-                            figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 1, figure_list[-1][0].coordinates[0][1] - 1]
-                    elif figure_list[-1][0].orientation % 4 == 1:
-                        if collision_list[figure_list[-1][0].coordinates[1][0] - 1][figure_list[-1][0].coordinates[1][1]] == 1:
-                            left_rotate_trigger = False
-                        if left_rotate_trigger:
-                            figure_list[-1][0].orientation += 1
-                            figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[1][0]-1, figure_list[-1][0].coordinates[1][1]]
-                    elif figure_list[-1][0].orientation % 4 == 2:
-                        if collision_list[figure_list[-1][0].coordinates[1][0]][figure_list[-1][0].coordinates[1][1] + 1] == 1:
-                            left_rotate_trigger = False
-                        if left_rotate_trigger:
-                            figure_list[-1][0].orientation += 1
-                            figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[1][0],
-                                                                 figure_list[-1][0].coordinates[1][1] - 2]
-
-
-
-
-
+                fast_move_down_trigger = True
+                fast_move_down_tick = time.time()
+    if previous_statick_figure_list_len != current_statick_figure_list_len:
+        fast_move_down_tick = time.time()
+    if keyboard.is_pressed('down'):
+        if time.time() - fast_move_down_tick > 0.2 and fast_move_down_tick != 0:
+            move_down_trigger2 = True
+            for square in figure_list[-1][0].coordinates:
+                if collision_list[square[0] + 1][square[1] + 1] == 1:
+                    move_down_trigger2 = False
+            if move_down_trigger2:
+                figure_list[-1][0].__move_down__()
+    if previous_statick_figure_list_len != current_statick_figure_list_len:
+        fast_move_left_tick = time.time()
+    if keyboard.is_pressed('left'):
+        if time.time() - fast_move_left_tick > 0.2 and fast_move_left_tick != 0:
+            move_down_trigger2 = True
+            for square in figure_list[-1][0].coordinates:
+                if collision_list[square[0]][square[1]] == 1:
+                    move_down_trigger2 = False
+            if move_down_trigger2:
+                figure_list[-1][0].__move_left__()
+    if previous_statick_figure_list_len != current_statick_figure_list_len:
+        fast_move_right_tick = time.time()
+    if keyboard.is_pressed('right'):
+        if time.time() - fast_move_right_tick > 0.2 and fast_move_right_tick != 0:
+            move_down_trigger2 = True
+            for square in figure_list[-1][0].coordinates:
+                if collision_list[square[0] + 2][square[1]] == 1:
+                    move_down_trigger2 = False
+            if move_down_trigger2:
+                figure_list[-1][0].__move_right__()
+    full_string_counter = 0
+    full_string_set = set()
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
@@ -406,6 +420,7 @@ while not finished:
                     kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 1)
                 else:
                     kvadratic_bigblik(x_for_each_square, y_for_each_square, square_side, level_color)
+    previous_statick_figure_list_len = current_statick_figure_list_len
     pygame.display.update()
     screen.fill((15, 10, 30))
 print('Huy')
