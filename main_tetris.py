@@ -86,9 +86,13 @@ class figures:
                 self.coordinates[i][1] += 1
 
     def __move_right__(self):
-        for i in range(len(self.coordinates)):
-            if self.coordinates[i][0] < 9:
-                self.coordinates[i][0] += 1
+        left_move_trigger = True
+        for elem in (self.coordinates):
+            if elem[0] >= 9:
+                left_move_trigger = False
+        if left_move_trigger:
+            for elem in (self.coordinates):
+                elem[0] += 1
 
     def __move_left__(self):
         left_move_trigger = True
