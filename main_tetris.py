@@ -831,6 +831,21 @@ def is_bad_column(A):
     return column_counter, column_set
 
 
+def is_bad_column(A):
+    column_counter = 0
+    column_trigger = True
+    column_set = set()
+    for j in range(len(A[0]) - 1):
+        for i in range(len(A)):
+            if A[i][j] == 0:
+                column_trigger = False
+        if column_trigger:
+            column_counter += 1
+            column_set.add(j)
+        column_trigger = True
+    return column_counter, column_set
+
+
 figure_list = list()
 static_figure_list = list()
 clock = pygame.time.Clock()
