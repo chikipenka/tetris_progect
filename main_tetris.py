@@ -1,6 +1,6 @@
 import time
-
 import pygame
+import keyboard
 from pygame.draw import *
 from random import *
 
@@ -66,19 +66,33 @@ font2 = pygame.font.SysFont("Courier New", 28, bold=True)
 class figures:
     def __init__(self, type, left_side):
         if type == 'square':
+            self.type = 'square'
             self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side, 0], [left_side + 1, 0]]
+            self.orientation = 0
         if type == 'left_z_figure':
+            self.type = 'left_z_figure'
             self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 1, 0], [left_side + 2, 0]]
+            self.orientation = 0
         if type == 'right_z_figure':
+            self.type = 'right_z_figure'
             self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side + 1, -1], [left_side + 2, -1]]
+            self.orientation = 0
         if type == 'left_l_figure':
+            self.type = 'left_l_figure'
             self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 2, -1], [left_side + 2, 0]]
+            self.orientation = 0
         if type == 'right_l_figure':
-            self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 2, -1], [left_side, 0]]
+            self.type = 'right_l_figure'
+            self.coordinates = [[left_side, 0], [left_side, -1], [left_side + 1, -1], [left_side + 2, -1]]
+            self.orientation = 0
         if type == 't_figure':
+            self.type = 't_figure'
             self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 2, -1], [left_side + 1, 0]]
+            self.orientation = 0
         if type == 'stick':
+            self.type = 'stick'
             self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side + 2, 0], [left_side + 3, 0]]
+            self.orientation = 0
 
     def __move__(self):
         for i in range(len(self.coordinates)):
@@ -86,14 +100,572 @@ class figures:
                 self.coordinates[i][1] += 1
 
     def __move_right__(self):
-        for i in range(len(self.coordinates)):
-            if self.coordinates[i][0] < 9:
-                self.coordinates[i][0] += 1
+        right_move_trigger = True
+        for elem in (self.coordinates):
+            if elem[0] >= 9:
+                right_move_trigger = False
+        if right_move_trigger:
+            for elem in (self.coordinates):
+                elem[0] += 1
 
     def __move_left__(self):
-        for i in range(len(self.coordinates)):
-            if self.coordinates[i][0] > 0:
-                self.coordinates[i][0] += 1
+        left_move_trigger = True
+        for elem in (self.coordinates):
+            if elem[0] <= 0:
+                left_move_trigger = False
+        if left_move_trigger:
+            for elem in (self.coordinates):
+                elem[0] -= 1
+
+    def __move_down__(self):
+        for elem in self.coordinates:
+            elem[1] += 1
+
+
+def rotate():
+    if event.key == pygame.K_n:
+        right_rotate_trigger = True
+        if figure_list[-1][0].type == 'stick':
+            if figure_list[-1][0].orientation % 4 == 1:
+                if collision_list[
+                    figure_list[-1][0].coordinates[0][0] - 1][
+                    figure_list[-1][0].coordinates[0][1] + 2] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[1][0]][
+                    figure_list[-1][0].coordinates[1][1] + 1] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[3][0] + 2][
+                    figure_list[-1][0].coordinates[3][1] - 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 2,
+                                                         figure_list[-1][0].coordinates[0][1] + 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] - 1,
+                                                         figure_list[-1][0].coordinates[1][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 1,
+                                                         figure_list[-1][0].coordinates[3][1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 0:
+                print(figure_list[-1][0].coordinates[0][0] + 3)
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 3][
+                    figure_list[-1][0].coordinates[0][1] + 2] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[1][0] + 2][
+                    figure_list[-1][0].coordinates[1][1] + 1] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[3][0]][
+                    figure_list[-1][0].coordinates[3][1] - 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 2,
+                                                         figure_list[-1][0].coordinates[0][1] + 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] + 1,
+                                                         figure_list[-1][0].coordinates[1][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 1,
+                                                         figure_list[-1][0].coordinates[3][1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 3:
+                if collision_list[
+                    figure_list[-1][0].coordinates[0][0] + 3][
+                    figure_list[-1][0].coordinates[0][1] - 2] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[1][0] + 2][
+                    figure_list[-1][0].coordinates[1][1] - 1] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[3][0]][
+                    figure_list[-1][0].coordinates[3][1] + 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 2,
+                                                         figure_list[-1][0].coordinates[0][1] - 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] + 1,
+                                                         figure_list[-1][0].coordinates[1][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 1,
+                                                         figure_list[-1][0].coordinates[3][1] + 1]
+            elif figure_list[-1][0].orientation % 4 == 2:
+                if collision_list[
+                    figure_list[-1][0].coordinates[0][0] - 1][
+                    figure_list[-1][0].coordinates[0][1] - 2] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[1][0]][
+                    figure_list[-1][0].coordinates[1][1] - 1] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[3][0] + 2][
+                    figure_list[-1][0].coordinates[3][1] + 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 2,
+                                                         figure_list[-1][0].coordinates[0][1] - 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] - 1,
+                                                         figure_list[-1][0].coordinates[1][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 1,
+                                                         figure_list[-1][0].coordinates[3][1] + 1]
+
+        if figure_list[-1][0].type == 'right_l_figure':
+            if figure_list[-1][0].orientation % 4 == 0:
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 1][
+                    figure_list[-1][0].coordinates[0][1] - 2] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[2][0] + 1][
+                            figure_list[-1][0].coordinates[2][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[2][0] + 1][
+                            figure_list[-1][0].coordinates[2][1] + 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0],
+                                                         figure_list[-1][0].coordinates[0][1] - 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] + 1,
+                                                         figure_list[-1][0].coordinates[1][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 1,
+                                                         figure_list[-1][0].coordinates[3][1] + 1]
+            elif figure_list[-1][0].orientation % 4 == 3:
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 3][
+                    figure_list[-1][0].coordinates[0][1]] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[1][0] + 2][
+                            figure_list[-1][0].coordinates[1][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0]][
+                            figure_list[-1][0].coordinates[3][1] - 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 2,
+                                                         figure_list[-1][0].coordinates[0][1]]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] + 1,
+                                                         figure_list[-1][0].coordinates[1][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 1,
+                                                         figure_list[-1][0].coordinates[3][1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 2:
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 1][
+                    figure_list[-1][0].coordinates[0][1] + 2] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[1][0]][
+                            figure_list[-1][0].coordinates[1][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 2][
+                            figure_list[-1][0].coordinates[3][1] - 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0],
+                                                         figure_list[-1][0].coordinates[0][1] + 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] - 1,
+                                                         figure_list[-1][0].coordinates[1][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 1,
+                                                         figure_list[-1][0].coordinates[3][1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 1:
+                if collision_list[figure_list[-1][0].coordinates[0][0] - 1][
+                    figure_list[-1][0].coordinates[0][1]] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[1][0]][
+                            figure_list[-1][0].coordinates[1][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 2][
+                            figure_list[-1][0].coordinates[3][1] + 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 2,
+                                                         figure_list[-1][0].coordinates[0][1]]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] - 1,
+                                                         figure_list[-1][0].coordinates[1][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 1,
+                                                         figure_list[-1][0].coordinates[3][1] + 1]
+        if figure_list[-1][0].type == 'left_l_figure':
+            if figure_list[-1][0].orientation % 4 == 0:
+                if collision_list[figure_list[-1][0].coordinates[3][0] - 1][
+                    figure_list[-1][0].coordinates[3][1]] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[2][0]][
+                            figure_list[-1][0].coordinates[2][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[0][0] + 2][
+                            figure_list[-1][0].coordinates[0][1] - 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 1,
+                                                         figure_list[-1][0].coordinates[0][1] - 1]
+                    figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[2][0] - 1,
+                                                         figure_list[-1][0].coordinates[2][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 2,
+                                                         figure_list[-1][0].coordinates[3][1]]
+            elif figure_list[-1][0].orientation % 4 == 3:
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 2][
+                    figure_list[-1][0].coordinates[0][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[2][0]][
+                            figure_list[-1][0].coordinates[2][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 1][
+                            figure_list[-1][0].coordinates[3][1] - 2] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 1,
+                                                         figure_list[-1][0].coordinates[0][1] + 1]
+                    figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[2][0] - 1,
+                                                         figure_list[-1][0].coordinates[2][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0],
+                                                         figure_list[-1][0].coordinates[3][1] - 2]
+            elif figure_list[-1][0].orientation % 4 == 2:
+                if collision_list[figure_list[-1][0].coordinates[0][0] - 1][
+                    figure_list[-1][0].coordinates[0][1]] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[2][0] + 2][
+                            figure_list[-1][0].coordinates[2][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 3][
+                            figure_list[-1][0].coordinates[3][1]] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 1,
+                                                         figure_list[-1][0].coordinates[0][1] + 1]
+                    figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[2][0] + 1,
+                                                         figure_list[-1][0].coordinates[2][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 2,
+                                                         figure_list[-1][0].coordinates[3][1]]
+            elif figure_list[-1][0].orientation % 4 == 1:
+                if collision_list[figure_list[-1][0].coordinates[0][0]][
+                    figure_list[-1][0].coordinates[0][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[2][0] + 2][
+                            figure_list[-1][0].coordinates[2][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 1][
+                            figure_list[-1][0].coordinates[3][1] + 2] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 1,
+                                                         figure_list[-1][0].coordinates[0][1] - 1]
+                    figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[2][0] + 1,
+                                                         figure_list[-1][0].coordinates[2][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0],
+                                                         figure_list[-1][0].coordinates[3][1] + 2]
+        if figure_list[-1][0].type == 't_figure':
+            if figure_list[-1][0].orientation % 4 == 0:
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                    figure_list[-1][0].coordinates[1][1] - 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    t = figure_list[-1][0].coordinates[2]
+                    figure_list[-1][0].coordinates[2] = figure_list[-1][0].coordinates[3]
+                    figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
+                    figure_list[-1][0].coordinates[0] = [t[0] - 1, t[1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 3:
+                if collision_list[figure_list[-1][0].coordinates[1][0]][
+                    figure_list[-1][0].coordinates[1][1]] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    t = figure_list[-1][0].coordinates[2]
+                    figure_list[-1][0].coordinates[2] = figure_list[-1][0].coordinates[3]
+                    figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
+                    figure_list[-1][0].coordinates[0] = [t[0] + 1, t[1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 2:
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                    figure_list[-1][0].coordinates[1][1] + 1] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    t = figure_list[-1][0].coordinates[2]
+                    figure_list[-1][0].coordinates[2] = figure_list[-1][0].coordinates[3]
+                    figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
+                    figure_list[-1][0].coordinates[0] = [t[0] + 1, t[1] + 1]
+            elif figure_list[-1][0].orientation % 4 == 1:
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 2][
+                    figure_list[-1][0].coordinates[1][1]] == 1:
+                    right_rotate_trigger = False
+                if right_rotate_trigger:
+                    figure_list[-1][0].orientation -= 1
+                    t = figure_list[-1][0].coordinates[2]
+                    figure_list[-1][0].coordinates[2] = figure_list[-1][0].coordinates[3]
+                    figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
+                    figure_list[-1][0].coordinates[0] = [t[0] - 1, t[1] + 1]
+
+    elif event.key == pygame.K_m:
+        # вращение против часовой стрелки
+        left_rotate_trigger = True
+        if figure_list[-1][0].type == 'stick':
+            if figure_list[-1][0].orientation % 4 == 0:
+                if collision_list[
+                    figure_list[-1][0].coordinates[0][0] + 3][
+                    figure_list[-1][0].coordinates[0][1] - 2] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[1][0] + 2][
+                    figure_list[-1][0].coordinates[1][1] - 1] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[3][0]][
+                    figure_list[-1][0].coordinates[3][1] + 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 2,
+                                                         figure_list[-1][0].coordinates[0][1] - 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] + 1,
+                                                         figure_list[-1][0].coordinates[1][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 1,
+                                                         figure_list[-1][0].coordinates[3][1] + 1]
+            elif figure_list[-1][0].orientation % 4 == 1:
+                print(figure_list[-1][0].coordinates[0][0] + 3)
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 3][
+                    figure_list[-1][0].coordinates[0][1] + 2] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[1][0] + 2][
+                    figure_list[-1][0].coordinates[1][1] + 1] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[3][0]][
+                    figure_list[-1][0].coordinates[3][1] - 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 2,
+                                                         figure_list[-1][0].coordinates[0][1] + 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] + 1,
+                                                         figure_list[-1][0].coordinates[1][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 1,
+                                                         figure_list[-1][0].coordinates[3][1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 2:
+                if collision_list[
+                    figure_list[-1][0].coordinates[0][0] - 1][
+                    figure_list[-1][0].coordinates[0][1] + 2] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[1][0]][
+                    figure_list[-1][0].coordinates[1][1] + 1] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[3][0] + 2][
+                    figure_list[-1][0].coordinates[3][1] - 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 2,
+                                                         figure_list[-1][0].coordinates[0][1] + 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] - 1,
+                                                         figure_list[-1][0].coordinates[1][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 1,
+                                                         figure_list[-1][0].coordinates[3][1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 3:
+                if collision_list[
+                    figure_list[-1][0].coordinates[0][0] - 1][
+                    figure_list[-1][0].coordinates[0][1] - 2] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[1][0]][
+                    figure_list[-1][0].coordinates[1][1] - 1] == 1 or collision_list[
+                    figure_list[-1][0].coordinates[3][0] + 2][
+                    figure_list[-1][0].coordinates[3][1] + 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 2,
+                                                         figure_list[-1][0].coordinates[0][1] - 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] - 1,
+                                                         figure_list[-1][0].coordinates[1][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 1,
+                                                         figure_list[-1][0].coordinates[3][1] + 1]
+        if figure_list[-1][0].type == 'right_l_figure':
+            if figure_list[-1][0].orientation % 4 == 0:
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 3][
+                    figure_list[-1][0].coordinates[0][1]] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[1][0] + 2][
+                            figure_list[-1][0].coordinates[1][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0]][
+                            figure_list[-1][0].coordinates[3][1] - 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 2,
+                                                         figure_list[-1][0].coordinates[0][1]]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] + 1,
+                                                         figure_list[-1][0].coordinates[1][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 1,
+                                                         figure_list[-1][0].coordinates[3][1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 1:
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 1][
+                    figure_list[-1][0].coordinates[0][1] - 2] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[1][0] + 2][
+                            figure_list[-1][0].coordinates[1][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0]][
+                            figure_list[-1][0].coordinates[3][1] + 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0],
+                                                         figure_list[-1][0].coordinates[0][1] - 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] + 1,
+                                                         figure_list[-1][0].coordinates[1][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 1,
+                                                         figure_list[-1][0].coordinates[3][1] + 1]
+            elif figure_list[-1][0].orientation % 4 == 2:
+                if collision_list[figure_list[-1][0].coordinates[0][0] - 1][
+                    figure_list[-1][0].coordinates[0][1]] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[1][0]][
+                            figure_list[-1][0].coordinates[1][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 2][
+                            figure_list[-1][0].coordinates[3][1] + 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 2,
+                                                         figure_list[-1][0].coordinates[0][1]]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] - 1,
+                                                         figure_list[-1][0].coordinates[1][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 1,
+                                                         figure_list[-1][0].coordinates[3][1] + 1]
+            elif figure_list[-1][0].orientation % 4 == 3:
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 1][
+                    figure_list[-1][0].coordinates[0][1] + 2] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[1][0]][
+                            figure_list[-1][0].coordinates[1][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 2][
+                            figure_list[-1][0].coordinates[3][1] - 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0],
+                                                         figure_list[-1][0].coordinates[0][1] + 2]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0] - 1,
+                                                         figure_list[-1][0].coordinates[1][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 1,
+                                                         figure_list[-1][0].coordinates[3][1] - 1]
+
+        left_rotate_trigger = True
+        if figure_list[-1][0].type == 'left_l_figure':
+            if figure_list[-1][0].orientation % 4 == 0:
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 2][
+                    figure_list[-1][0].coordinates[0][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[2][0]][
+                            figure_list[-1][0].coordinates[2][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 1][
+                            figure_list[-1][0].coordinates[3][1] - 2] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 1,
+                                                         figure_list[-1][0].coordinates[0][1] + 1]
+                    figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[2][0] - 1,
+                                                         figure_list[-1][0].coordinates[2][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0],
+                                                         figure_list[-1][0].coordinates[3][1] - 2]
+            elif figure_list[-1][0].orientation % 4 == 1:
+                if collision_list[figure_list[-1][0].coordinates[0][0] + 2][
+                    figure_list[-1][0].coordinates[0][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[2][0]][
+                            figure_list[-1][0].coordinates[2][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] - 1][
+                            figure_list[-1][0].coordinates[3][1]] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 1,
+                                                         figure_list[-1][0].coordinates[0][1] - 1]
+                    figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[2][0] - 1,
+                                                         figure_list[-1][0].coordinates[2][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 2,
+                                                         figure_list[-1][0].coordinates[3][1]]
+            elif figure_list[-1][0].orientation % 4 == 2:
+                if collision_list[figure_list[-1][0].coordinates[0][0]][
+                    figure_list[-1][0].coordinates[0][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[2][0] + 2][
+                            figure_list[-1][0].coordinates[2][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 1][
+                            figure_list[-1][0].coordinates[3][1] + 2] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 1,
+                                                         figure_list[-1][0].coordinates[0][1] - 1]
+                    figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[2][0] + 1,
+                                                         figure_list[-1][0].coordinates[2][1] + 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0],
+                                                         figure_list[-1][0].coordinates[3][1] + 2]
+            elif figure_list[-1][0].orientation % 4 == 3:
+                if collision_list[figure_list[-1][0].coordinates[0][0]][
+                    figure_list[-1][0].coordinates[0][1] + 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[2][0] + 2][
+                            figure_list[-1][0].coordinates[2][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 3][
+                            figure_list[-1][0].coordinates[3][1]] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 1,
+                                                         figure_list[-1][0].coordinates[0][1] + 1]
+                    figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[2][0] + 1,
+                                                         figure_list[-1][0].coordinates[2][1] - 1]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 2,
+                                                         figure_list[-1][0].coordinates[3][1]]
+
+        if figure_list[-1][0].type == 't_figure':
+            if figure_list[-1][0].orientation % 4 == 0:
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                    figure_list[-1][0].coordinates[1][1] - 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    t = figure_list[-1][0].coordinates[0]
+                    figure_list[-1][0].coordinates[0] = figure_list[-1][0].coordinates[3]
+                    figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[2]
+                    figure_list[-1][0].coordinates[2] = [t[0] + 1, t[1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 1:
+                if collision_list[figure_list[-1][0].coordinates[1][0]][
+                    figure_list[-1][0].coordinates[1][1]] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    t = figure_list[-1][0].coordinates[0]
+                    figure_list[-1][0].coordinates[0] = figure_list[-1][0].coordinates[3]
+                    figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[2]
+                    figure_list[-1][0].coordinates[2] = [t[0] - 1, t[1] - 1]
+            elif figure_list[-1][0].orientation % 4 == 2:
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                    figure_list[-1][0].coordinates[1][1] + 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    t = figure_list[-1][0].coordinates[0]
+                    figure_list[-1][0].coordinates[0] = figure_list[-1][0].coordinates[3]
+                    figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[2]
+                    figure_list[-1][0].coordinates[2] = [t[0] - 1, t[1] + 1]
+            elif figure_list[-1][0].orientation % 4 == 3:
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 2][
+                    figure_list[-1][0].coordinates[1][1]] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    t = figure_list[-1][0].coordinates[0]
+                    figure_list[-1][0].coordinates[0] = figure_list[-1][0].coordinates[3]
+                    figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[2]
+                    figure_list[-1][0].coordinates[2] = [t[0] + 1, t[1] + 1]
+
+    if event.key == pygame.K_m or event.key == pygame.K_n:
+        left_rotate_trigger = True
+        if figure_list[-1][0].type == 'left_z_figure':
+            if figure_list[-1][0].orientation % 2 == 0:
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                    figure_list[-1][0].coordinates[1][1] - 1] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[0][0] + 1][
+                            figure_list[-1][0].coordinates[0][1] + 1] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[2][0],
+                                                         figure_list[-1][0].coordinates[2][1] - 2]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] - 2,
+                                                         figure_list[-1][0].coordinates[3][1]]
+            else:
+                if collision_list[figure_list[-1][0].coordinates[2][0] + 1][
+                    figure_list[-1][0].coordinates[2][1] + 2] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[3][0] + 3][
+                            figure_list[-1][0].coordinates[3][1]] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[2] = [figure_list[-1][0].coordinates[2][0],
+                                                         figure_list[-1][0].coordinates[2][1] + 2]
+                    figure_list[-1][0].coordinates[3] = [figure_list[-1][0].coordinates[3][0] + 2,
+                                                         figure_list[-1][0].coordinates[3][1]]
+        if figure_list[-1][0].type == 'right_z_figure':
+            if figure_list[-1][0].orientation % 2 == 0:
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                    figure_list[-1][0].coordinates[1][1] - 2] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[0][0] + 3][
+                            figure_list[-1][0].coordinates[0][1]] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 2,
+                                                         figure_list[-1][0].coordinates[0][1]]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0],
+                                                         figure_list[-1][0].coordinates[1][1] - 2]
+            else:
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                    figure_list[-1][0].coordinates[1][1] + 2] == 1 or \
+                        collision_list[figure_list[-1][0].coordinates[0][0] - 1][
+                            figure_list[-1][0].coordinates[0][1]] == 1:
+                    left_rotate_trigger = False
+                if left_rotate_trigger:
+                    figure_list[-1][0].orientation += 1
+                    figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] - 2,
+                                                         figure_list[-1][0].coordinates[0][1]]
+                    figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0],
+                                                         figure_list[-1][0].coordinates[1][1] + 2]
 
 
 def kvadratic_blik(x, y, a, i, color_type):
@@ -102,19 +674,8 @@ def kvadratic_blik(x, y, a, i, color_type):
     y строго от yy
     '''
     colors = COLORS[i]
-    pygame.draw.rect(screen, colors[color_type], (x, y, a, a))
-    pygame.draw.rect(screen, BLACK, (x, y, a, a), 2)
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 2 * a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + 2 * a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 2 * a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + 2 * a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
     d = int(a // 10)
-    pygame.draw.rect(screen, colors[1], (x, y, a, a))
-    pygame.draw.rect(screen, colors[0], (x, y, a, a))
+    pygame.draw.rect(screen, colors[color_type], (x, y, a, a))
     pygame.draw.rect(screen, BLACK, (x, y, a, a), d)
     pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, d, d))
     pygame.draw.rect(screen, WHITE, (x + 2 * d + d, y + d + d, d, d))
@@ -255,12 +816,41 @@ def drawer():
     rect(screen, clr2, (81 / 405 * width, 561 / 630 * height, (95 - x2) / 405 * width, (63 - y2) / 630 * height), 1)
 
 
+def is_bad_column(A):
+    column_counter = 0
+    column_trigger = True
+    column_set = set()
+    for j in range(len(A[0]) - 1):
+        for i in range(len(A)):
+            if A[i][j] == 0:
+                column_trigger = False
+        if column_trigger:
+            column_counter += 1
+            column_set.add(j)
+        column_trigger = True
+    return column_counter, column_set
+
+
 figure_list = list()
+static_figure_list = list()
 clock = pygame.time.Clock()
 finished = False
 time_counter = 0
-collision_list = [20] * 10
+collision_list = [[0] * 21 for i in range(12)]
+for i in range(len(collision_list)):
+    for j in range(len(collision_list[i])):
+        if j == len(collision_list[i]) - 1 or i == 0 or i == len(collision_list) - 1:
+            collision_list[i][j] = 1
+for i in range(len(collision_list)):
+    print(collision_list[i])
+print(collision_list[0][12])
+fast_move_down_trigger = False
+fast_move_down_tick = 0
+fast_move_left_tick = 0
+fast_move_right_tick = 0
+previous_statick_figure_list_len = 0
 while not finished:
+    current_statick_figure_list_len = len(static_figure_list)
     drawer()
     scorer_draw(score, clr3, font1)
     lvlup_draw(LVL, clr3, font2)
@@ -269,13 +859,13 @@ while not finished:
     nick_name(nick_n, clr3, font1)
     clock.tick(FPS)
     time_counter += 1
-    level_color = 2
-    if time_counter == 100:
+    level_color = 1
+    if time_counter == 20:
         current_type = choice(types)
         if current_type == 'square':
             figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
         elif current_type == 'stick':
-            figure_list.append([figures('square', randint(0, 6)), randint(0, 2)])
+            figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
         else:
             figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
     if time_counter % 10 == 0:
@@ -284,26 +874,97 @@ while not finished:
             add_trigger = False
             touch_time = 0
             for square in fig[0].coordinates:
-                if square[1] >= collision_list[square[0]] - 1:
+                if collision_list[square[0] + 1][square[1] + 1] == 1:
                     move_trigger = False
             if move_trigger:
                 fig[0].__move__()
             else:
+                figure_list.remove(fig)
+                static_figure_list.append(fig)
+                add_trigger = True
+                touch_time = time.time()
                 for square in fig[0].coordinates:
-                    if collision_list[square[0]] > square[1]:
-                        add_trigger = True
-                        touch_time = time.time()
-                        collision_list[square[0]] = square[1]
+                    collision_list[square[0] + 1][square[1]] = 1
             if add_trigger:
+                add_trigger = False
                 while time.time() - touch_time < 0.2:
                     pass
                 current_type = choice(types)
                 if current_type == 'square':
                     figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
                 elif current_type == 'stick':
-                    figure_list.append([figures('square', randint(0, 6)), randint(0, 2)])
+                    figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
                 else:
                     figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            finished = True
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_ESCAPE:
+                finished = True
+            if event.key == pygame.K_DOWN:
+                fast_move_down_trigger = False
+        elif event.type == pygame.KEYDOWN:
+            rotate()
+            if event.key == pygame.K_LEFT:
+                fast_move_left_trigger = True
+                fast_move_left_tick = time.time()
+                left_time_tick = time.time()
+                move_left_trigger2 = True
+                for square in figure_list[-1][0].coordinates:
+                    if collision_list[square[0]][square[1]] == 1:
+                        move_left_trigger2 = False
+                if move_left_trigger2:
+                    figure_list[-1][0].__move_left__()
+            if event.key == pygame.K_RIGHT:
+                fast_move_right_tick = time.time()
+                move_right_trigger2 = True
+                for square in figure_list[-1][0].coordinates:
+                    if collision_list[square[0] + 2][square[1]] == 1:
+                        move_right_trigger2 = False
+                if move_right_trigger2:
+                    figure_list[-1][0].__move_right__()
+            figure_list_len = len(figure_list)
+            if event.key == pygame.K_DOWN:
+                fast_move_down_trigger = True
+                fast_move_down_tick = time.time()
+    if previous_statick_figure_list_len != current_statick_figure_list_len:
+        fast_move_down_tick = time.time()
+    if keyboard.is_pressed('down'):
+        if time.time() - fast_move_down_tick > 0.2 and fast_move_down_tick != 0:
+            move_down_trigger2 = True
+            for square in figure_list[-1][0].coordinates:
+                if collision_list[square[0] + 1][square[1] + 1] == 1:
+                    move_down_trigger2 = False
+            if move_down_trigger2:
+                figure_list[-1][0].__move_down__()
+    if previous_statick_figure_list_len != current_statick_figure_list_len:
+        fast_move_left_tick = time.time()
+    if keyboard.is_pressed('left'):
+        if time.time() - fast_move_left_tick > 0.2 and fast_move_left_tick != 0:
+            move_down_trigger2 = True
+            for square in figure_list[-1][0].coordinates:
+                if collision_list[square[0]][square[1]] == 1:
+                    move_down_trigger2 = False
+            if move_down_trigger2:
+                figure_list[-1][0].__move_left__()
+    if previous_statick_figure_list_len != current_statick_figure_list_len:
+        fast_move_right_tick = time.time()
+    if keyboard.is_pressed('right'):
+        if time.time() - fast_move_right_tick > 0.2 and fast_move_right_tick != 0:
+            move_down_trigger2 = True
+            for square in figure_list[-1][0].coordinates:
+                if collision_list[square[0] + 2][square[1]] == 1:
+                    move_down_trigger2 = False
+            if move_down_trigger2:
+                figure_list[-1][0].__move_right__()
+    full_string_counter, full_string_set = is_bad_column(collision_list)
+    for full_string in full_string_set:
+        for fig in static_figure_list:
+            for square in fig[0].coordinates:
+                if square[1] == full_string:
+                    fig[0].coordinates.remove(square)
+    print(full_string_counter, full_string_set)
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
@@ -315,12 +976,18 @@ while not finished:
                     kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 1)
                 else:
                     kvadratic_bigblik(x_for_each_square, y_for_each_square, square_side, level_color)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            finished = True
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_ESCAPE:
-                finished = True
+    for fig in static_figure_list:
+        for i in range(len(fig[0].coordinates)):
+            x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
+                                                             square_side, 185 / 405 * width, 130 / 630 * height)
+            if fig[0].coordinates[i][1] >= 0:
+                if fig[1] == 0:
+                    kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 0)
+                elif fig[1] == 1:
+                    kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 1)
+                else:
+                    kvadratic_bigblik(x_for_each_square, y_for_each_square, square_side, level_color)
+    previous_statick_figure_list_len = current_statick_figure_list_len
     pygame.display.update()
     screen.fill((15, 10, 30))
 print('Huy')
