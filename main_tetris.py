@@ -269,6 +269,19 @@ def drawer():
     rect(screen, clr2, (83 / 405 * width, 563 / 630 * height, (95 - x1) / 405 * width, (63 - y1) / 630 * height), 2)
     rect(screen, clr2, (81 / 405 * width, 561 / 630 * height, (95 - x2) / 405 * width, (63 - y2) / 630 * height), 1)
 
+def is_bad_column(A):
+    column_counter = 0
+    column_trigger = True
+    column_set = set()
+    for j in range(len(A[0]) - 1):
+        for i in range(len(A)):
+            if A[i][j] == 0:
+                column_trigger = False
+        if column_trigger:
+            column_counter += 1
+            column_set.add(j)
+        column_trigger = True
+    return column_counter, column_set
 
 figure_list = list()
 static_figure_list = list()
@@ -396,8 +409,13 @@ while not finished:
                     move_down_trigger2 = False
             if move_down_trigger2:
                 figure_list[-1][0].__move_right__()
-    full_string_counter = 0
-    full_string_set = set()
+    full_string_counter, full_string_set = is_bad_column(collision_list)
+    for full_string in full_string_set:
+        for fig in static_figure_list:
+            for square in fig[0].coordinates:
+                if square[1] == full_string:
+                    fig[0].coordinates.remove(square)
+    print(full_string_counter, full_string_set)
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
