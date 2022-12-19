@@ -91,9 +91,13 @@ class figures:
                 self.coordinates[i][0] += 1
 
     def __move_left__(self):
-        for i in range(len(self.coordinates)):
-            if self.coordinates[i][0] > 0:
-                self.coordinates[i][0] += 1
+        left_move_trigger = True
+        for elem in (self.coordinates):
+            if elem[0] <= 0:
+                left_move_trigger = False
+        if left_move_trigger:
+            for elem in (self.coordinates):
+                elem[0] -= 1
 
 
 def kvadratic_blik(x, y, a, i, color_type):
@@ -102,19 +106,8 @@ def kvadratic_blik(x, y, a, i, color_type):
     y строго от yy
     '''
     colors = COLORS[i]
-    pygame.draw.rect(screen, colors[color_type], (x, y, a, a))
-    pygame.draw.rect(screen, BLACK, (x, y, a, a), 2)
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 2 * a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + 2 * a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 2 * a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + 2 * a / 10 + 5, a / 10, a / 10))
-    pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
     d = int(a // 10)
-    pygame.draw.rect(screen, colors[1], (x, y, a, a))
-    pygame.draw.rect(screen, colors[0], (x, y, a, a))
+    pygame.draw.rect(screen, colors[color_type], (x, y, a, a))
     pygame.draw.rect(screen, BLACK, (x, y, a, a), d)
     pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, d, d))
     pygame.draw.rect(screen, WHITE, (x + 2 * d + d, y + d + d, d, d))
@@ -275,7 +268,7 @@ while not finished:
         if current_type == 'square':
             figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
         elif current_type == 'stick':
-            figure_list.append([figures('square', randint(0, 6)), randint(0, 2)])
+            figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
         else:
             figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
     if time_counter % 10 == 0:
@@ -301,9 +294,20 @@ while not finished:
                 if current_type == 'square':
                     figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
                 elif current_type == 'stick':
-                    figure_list.append([figures('square', randint(0, 6)), randint(0, 2)])
+                    figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
                 else:
                     figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            finished = True
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_ESCAPE:
+                finished = True
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                figure_list[-1][0].__move_left__()
+            if event.key == pygame.K_RIGHT:
+                figure_list[-1][0].__move_right__()
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
@@ -315,12 +319,6 @@ while not finished:
                     kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 1)
                 else:
                     kvadratic_bigblik(x_for_each_square, y_for_each_square, square_side, level_color)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            finished = True
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_ESCAPE:
-                finished = True
     pygame.display.update()
     screen.fill((15, 10, 30))
 print('Huy')
