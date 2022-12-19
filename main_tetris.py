@@ -831,30 +831,15 @@ def is_bad_column(A):
     return column_counter, column_set
 
 
-def is_bad_column(A):
-    column_counter = 0
-    column_trigger = True
-    column_set = set()
-    for j in range(len(A[0]) - 1):
-        for i in range(len(A)):
-            if A[i][j] == 0:
-                column_trigger = False
-        if column_trigger:
-            column_counter += 1
-            column_set.add(j)
-        column_trigger = True
-    return column_counter, column_set
-
-
 figure_list = list()
 static_figure_list = list()
 clock = pygame.time.Clock()
 finished = False
 time_counter = 0
-collision_list = [[0] * 21 for i in range(12)]
+collision_list = [[0] * 24 for i in range(12)]
 for i in range(len(collision_list)):
     for j in range(len(collision_list[i])):
-        if j == len(collision_list[i]) - 1 or i == 0 or i == len(collision_list) - 1:
+        if j == len(collision_list[i]) - 4 or i == 0 or i == len(collision_list) - 1:
             collision_list[i][j] = 1
 for i in range(len(collision_list)):
     print(collision_list[i])
