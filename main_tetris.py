@@ -66,19 +66,33 @@ font2 = pygame.font.SysFont("Courier New", 28, bold=True)
 class figures:
     def __init__(self, type, left_side):
         if type == 'square':
+            self.type = 'square'
             self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side, 0], [left_side + 1, 0]]
+            self.orientation = 0
         if type == 'left_z_figure':
+            self.type = 'left_z_figure'
             self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 1, 0], [left_side + 2, 0]]
+            self.orientation = 0
         if type == 'right_z_figure':
+            self.type = 'right_z_figure'
             self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side + 1, -1], [left_side + 2, -1]]
+            self.orientation = 0
         if type == 'left_l_figure':
+            self.type = 'left_l_figure'
             self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 2, -1], [left_side + 2, 0]]
+            self.orientation = 0
         if type == 'right_l_figure':
+            self.type = 'right_l_figure'
             self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 2, -1], [left_side, 0]]
+            self.orientation = 0
         if type == 't_figure':
+            self.type = 't_figure'
             self.coordinates = [[left_side, -1], [left_side + 1, -1], [left_side + 2, -1], [left_side + 1, 0]]
+            self.orientation = 0
         if type == 'stick':
+            self.type = 'stick'
             self.coordinates = [[left_side, 0], [left_side + 1, 0], [left_side + 2, 0], [left_side + 3, 0]]
+            self.orientation = 0
 
     def __move__(self):
         for i in range(len(self.coordinates)):
@@ -102,7 +116,9 @@ class figures:
         if left_move_trigger:
             for elem in (self.coordinates):
                 elem[0] -= 1
-
+    def __move_down__(self):
+        for elem in self.coordinates:
+            elem[1] += 1
 
 def kvadratic_blik(x, y, a, i, color_type):
     ''' i - номер в массиве, который зависит от уровня
@@ -334,6 +350,27 @@ while not finished:
                         move_right_trigger2 = False
                 if move_right_trigger2:
                     figure_list[-1][0].__move_right__()
+            if event.key == pygame.K_DOWN:
+                move_down_trigger2 = True
+                for square in figure_list[-1][0].coordinates:
+                    if collision_list[square[0] + 1][square[1] + 1] == 1:
+                        move_down_trigger2 = False
+                if move_down_trigger2:
+                    figure_list[-1][0].__move_down__()
+            if event.key == pygame.K_m:
+                left_rotate_trigger = True
+                if figure_list[-1][0].type == 't_figure':
+                    if figure_list[-1][0].orientation % 4 == 0:
+                        if collision_list[figure_list[-1][0].coordinates[1][0]][figure_list[-1][0].coordinates[1][0] + 1] == 1 or collision_list[figure_list[-1][0].coordinates[1][0]][figure_list[-1][0].coordinates[1][0] - 1]  == 1:
+                            left_rotate_trigger = False
+                        if left_rotate_trigger:
+                            figure_list[-1][0].orientation += 1
+                            figure_list[-1][0].coordinates[0] = [figure_list[-1][0].coordinates[0][0] + 1, figure_list[-1][0].coordinates[0][1] - 1]
+
+
+
+
+
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
