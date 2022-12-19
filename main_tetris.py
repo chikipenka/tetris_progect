@@ -1,17 +1,16 @@
+import time
+
 import pygame
 from pygame.draw import *
 from random import *
 
 pygame.init()
-
 FPS = 30
-
 # initializing pygame
 pygame.font.init()
 # check whether font is initialized
 # or not
 pygame.font.get_init()
-
 # display window parameters
 width = 400
 height = 600
@@ -34,9 +33,7 @@ clr1 = (105, 235, 175)
 clr2 = (35, 35, 35)
 # Texts colour
 clr3 = (255, 255, 255)
-
 screen = pygame.display.set_mode((width, height))
-
 square_side = 21 / 405 * width
 BLUE = (65, 105, 225)
 RED = (139, 0, 0)
@@ -54,15 +51,12 @@ FGREN = (35, 185, 105)
 MALINA = (185, 35, 130)
 COLORS = [[BLUE, RED], [PURPLE, DPURPLE], [RED, YELLOW], [BLUWUE, BLUE], [GREN, GREENY], [PURPLE, PINK], [BLUE, GREEN],
           [MALINA, FGREN]]
-
 types = ['square', 'left_z_figure', 'right_z_figure', 'left_l_figure', 'right_l_figure', 't_figure', 'stick']
 orientation = ['straight', 'left', 'right', 'bottom']
 print(choice(types))
-
 # texts
 # add background color using RGB values
 screen.fill((15, 10, 30))
-
 # Create a font file by passing font file
 # and size of the font
 font1 = pygame.font.SysFont("Courier New", 24, bold=True)
@@ -108,7 +102,17 @@ def kvadratic_blik(x, y, a, i, color_type):
     y строго от yy
     '''
     colors = COLORS[i]
-    d = int(a//10)
+    pygame.draw.rect(screen, colors[color_type], (x, y, a, a))
+    pygame.draw.rect(screen, BLACK, (x, y, a, a), 2)
+    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
+    pygame.draw.rect(screen, WHITE, (x + 2 * a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
+    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + 2 * a / 10 + 5, a / 10, a / 10))
+    pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
+    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
+    pygame.draw.rect(screen, WHITE, (x + 2 * a / 10 + 5, y + a / 10 + 5, a / 10, a / 10))
+    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + 2 * a / 10 + 5, a / 10, a / 10))
+    pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
+    d = int(a // 10)
     pygame.draw.rect(screen, colors[1], (x, y, a, a))
     pygame.draw.rect(screen, colors[0], (x, y, a, a))
     pygame.draw.rect(screen, BLACK, (x, y, a, a), d)
@@ -125,14 +129,18 @@ def kvadratic_blik(x, y, a, i, color_type):
 def kvadratic_bigblik(x, y, a, i):
     ''' i - номер в массиве, который зависит от уровня'''
     colors = COLORS[i]
-    d = int(a//10)
+    d = int(a // 10)
     pygame.draw.rect(screen, colors[0], (x, y, a, a))
     pygame.draw.rect(screen, BLACK, (x, y, a, a), d)
-    pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, a - 2*d - 2*d, a - 2*d - 2*d))
+    pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, a - 2 * d - 2 * d, a - 2 * d - 2 * d))
     pygame.draw.rect(screen, WHITE, (x + d, y + d, d, d))
     pygame.draw.rect(screen, BLACK, (x, y, a, a), 2)
-    pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, a - 2*d - 2*d, a - 2*d - 2*d))
+    pygame.draw.rect(screen, WHITE, (x + a / 10 + 5, y + a / 10 + 5, a - a / 5 - 10, a - a / 5 - 10))
+    pygame.draw.rect(screen, WHITE, (x + 5, y + 5, a / 10, a / 10))
+
+    pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, a - 2 * d - 2 * d, a - 2 * d - 2 * d))
     pygame.draw.rect(screen, WHITE, (x + d, y + d, d, d))
+
 
 # a - ребро квадратика, нужно будет определить и поменять
 # xx, yy - координаты  левого верхнего угла игрового окнa
@@ -251,6 +259,7 @@ figure_list = list()
 clock = pygame.time.Clock()
 finished = False
 time_counter = 0
+collision_list = [20] * 10
 while not finished:
     drawer()
     scorer_draw(score, clr3, font1)
@@ -258,11 +267,10 @@ while not finished:
     line_draw(Line, clr3, font1)
     trt_draw(TRT, clr3, font2)
     nick_name(nick_n, clr3, font1)
-
     clock.tick(FPS)
     time_counter += 1
-    level_color = 6
-    if time_counter % 90 == 0:
+    level_color = 2
+    if time_counter == 100:
         current_type = choice(types)
         if current_type == 'square':
             figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
@@ -270,19 +278,43 @@ while not finished:
             figure_list.append([figures('square', randint(0, 6)), randint(0, 2)])
         else:
             figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
-    if time_counter % 15 == 0:
+    if time_counter % 10 == 0:
         for fig in figure_list:
-            fig[0].__move__()
+            move_trigger = True
+            add_trigger = False
+            touch_time = 0
+            for square in fig[0].coordinates:
+                if square[1] >= collision_list[square[0]] - 1:
+                    move_trigger = False
+            if move_trigger:
+                fig[0].__move__()
+            else:
+                for square in fig[0].coordinates:
+                    if collision_list[square[0]] > square[1]:
+                        add_trigger = True
+                        touch_time = time.time()
+                        collision_list[square[0]] = square[1]
+            if add_trigger:
+                while time.time() - touch_time < 0.2:
+                    pass
+                current_type = choice(types)
+                if current_type == 'square':
+                    figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
+                elif current_type == 'stick':
+                    figure_list.append([figures('square', randint(0, 6)), randint(0, 2)])
+                else:
+                    figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
                                                              square_side, 185 / 405 * width, 130 / 630 * height)
-            if fig[1] == 0:
-                kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 0)
-            elif fig[1] == 1:
-                kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 1)
-            else:
-                kvadratic_bigblik(x_for_each_square, y_for_each_square, square_side, level_color)
+            if fig[0].coordinates[i][1] >= 0:
+                if fig[1] == 0:
+                    kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 0)
+                elif fig[1] == 1:
+                    kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 1)
+                else:
+                    kvadratic_bigblik(x_for_each_square, y_for_each_square, square_side, level_color)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finished = True
