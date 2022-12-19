@@ -86,11 +86,11 @@ class figures:
                 self.coordinates[i][1] += 1
 
     def __move_right__(self):
-        left_move_trigger = True
+        right_move_trigger = True
         for elem in (self.coordinates):
             if elem[0] >= 9:
-                left_move_trigger = False
-        if left_move_trigger:
+                right_move_trigger = False
+        if right_move_trigger:
             for elem in (self.coordinates):
                 elem[0] += 1
 
@@ -253,10 +253,19 @@ def drawer():
 
 
 figure_list = list()
+static_figure_list = list()
 clock = pygame.time.Clock()
 finished = False
 time_counter = 0
-collision_list = [20] * 10
+collision_list = [[0] * 21 for i in range(12)]
+for i in range(len(collision_list)):
+    for j in range(len(collision_list[i])):
+        if j == len(collision_list[i]) - 1 or i == 0 or i == len(collision_list) - 1:
+            collision_list[i][j] = 1
+for i in range(len(collision_list)):
+    print(collision_list[i])
+print(collision_list[0][12])
+
 while not finished:
     drawer()
     scorer_draw(score, clr3, font1)
@@ -267,7 +276,7 @@ while not finished:
     clock.tick(FPS)
     time_counter += 1
     level_color = 2
-    if time_counter == 100:
+    if time_counter == 20:
         current_type = choice(types)
         if current_type == 'square':
             figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
@@ -281,17 +290,19 @@ while not finished:
             add_trigger = False
             touch_time = 0
             for square in fig[0].coordinates:
-                if square[1] >= collision_list[square[0]] - 1:
+                if collision_list[square[0] + 1][square[1] + 1] == 1:
                     move_trigger = False
             if move_trigger:
                 fig[0].__move__()
             else:
+                figure_list.remove(fig)
+                static_figure_list.append(fig)
+                add_trigger = True
+                touch_time = time.time()
                 for square in fig[0].coordinates:
-                    if collision_list[square[0]] > square[1]:
-                        add_trigger = True
-                        touch_time = time.time()
-                        collision_list[square[0]] = square[1]
+                    collision_list[square[0] + 1][square[1]] = 1
             if add_trigger:
+                add_trigger = False
                 while time.time() - touch_time < 0.2:
                     pass
                 current_type = choice(types)
@@ -301,6 +312,7 @@ while not finished:
                     figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
                 else:
                     figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finished = True
@@ -309,10 +321,31 @@ while not finished:
                 finished = True
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                figure_list[-1][0].__move_left__()
+                move_left_trigger2 = True
+                for square in figure_list[-1][0].coordinates:
+                    if collision_list[square[0]][square[1]] == 1:
+                        move_left_trigger2 = False
+                if move_left_trigger2:
+                    figure_list[-1][0].__move_left__()
             if event.key == pygame.K_RIGHT:
-                figure_list[-1][0].__move_right__()
+                move_right_trigger2 = True
+                for square in figure_list[-1][0].coordinates:
+                    if collision_list[square[0]+2][square[1]] == 1:
+                        move_right_trigger2 = False
+                if move_right_trigger2:
+                    figure_list[-1][0].__move_right__()
     for fig in figure_list:
+        for i in range(len(fig[0].coordinates)):
+            x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
+                                                             square_side, 185 / 405 * width, 130 / 630 * height)
+            if fig[0].coordinates[i][1] >= 0:
+                if fig[1] == 0:
+                    kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 0)
+                elif fig[1] == 1:
+                    kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 1)
+                else:
+                    kvadratic_bigblik(x_for_each_square, y_for_each_square, square_side, level_color)
+    for fig in static_figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
                                                              square_side, 185 / 405 * width, 130 / 630 * height)
