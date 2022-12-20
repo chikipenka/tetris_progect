@@ -61,6 +61,7 @@ def dead_inside(tup, mouz):
         return True
     return False
 
+
 while True:
 
     for ev in pygame.event.get():
