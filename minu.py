@@ -17,6 +17,7 @@ PINK = (245, 125, 245)
 GREEN = (0, 255, 26)
 FGREN = (35, 185, 105)
 MALINA = (185, 35, 130)
+GREY = (47,79,79)
 
 # initializing the constructor
 pygame.init()
@@ -29,25 +30,31 @@ dog_surf = pygame.image.load(path)
 dog_surf = pygame.transform.scale(dog_surf, (400, 600))
 
 dog_rect = dog_surf.get_rect(
-    bottomright=(width, height + 20))
+    bottomright=(width, height))
 
 buttons_list = []
-
-buttons_list.append(('start', (130, 280, 120, 60), DPURPLE, PURPLE))
-buttons_list.append(('quit', (130, 370, 120, 60), DPURPLE, PURPLE))
+a = 120
+c = int(a/2)
+d = 5
+width2 = int(width/2)
+height2 = int(height/2)
+buttons_list.append(('start', (width2-c, height2, a, c), DPURPLE, PURPLE))
+buttons_list.append(('quit', ((width2)-c, height2 + a, a, c), DPURPLE, PURPLE))
 
 
 def draw_button(lict, mouz):
     for but in lict:
         if dead_inside(but[1], mouz):
             pygame.draw.rect(screen, but[3], but[1])
+            pygame.draw.rect(screen, WHITE, (but[1][0]-d, but[1][1] - d, a+2*d, c+2*d), d)
         else:
             pygame.draw.rect(screen, but[2], but[1])
-        font = pygame.font.SysFont('serif', 48)
+            pygame.draw.rect(screen, WHITE, (but[1][0] - d, but[1][1] - d, a + 2 * d, c + 2 * d), d)
+        font = pygame.font.SysFont('lobster', 55)
         text = font.render(but[0], False,
-                           (0, 180, 0))
+                           (0, 0, 0))
 
-        screen.blit(text, but[1])
+        screen.blit(text, (but[1][0]+a/8, but[1][1]+a/10))
 
 
 def dead_inside(tup, mouz):
