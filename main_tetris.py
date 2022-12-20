@@ -4,6 +4,7 @@ from random import *
 import keyboard
 import pygame
 from pygame.draw import *
+from pathlib import Path
 
 pygame.init()
 FPS = 30
@@ -50,6 +51,8 @@ PINK = (245, 125, 245)
 GREEN = (0, 255, 26)
 FGREN = (35, 185, 105)
 MALINA = (185, 35, 130)
+GREY = (47,79,79)
+
 COLORS = [[BLUE, RED], [PURPLE, DPURPLE], [RED, YELLOW], [BLUWUE, BLUE], [GREN, GREENY], [PURPLE, PINK], [BLUE, GREEN],
           [MALINA, FGREN]]
 types = ['square', 'left_z_figure', 'right_z_figure', 'left_l_figure', 'right_l_figure', 't_figure', 'stick']
@@ -63,6 +66,40 @@ screen.fill((15, 10, 30))
 font1 = pygame.font.SysFont("Courier New", 24, bold=True)
 font2 = pygame.font.SysFont("Courier New", 28, bold=True)
 
+#menu
+path = Path('dog.jpg')
+dog_surf = pygame.image.load(path)
+dog_surf = pygame.transform.scale(dog_surf, (400, 600))
+dog_rect = dog_surf.get_rect(
+    bottomright=(width, height))
+
+buttons_list = []
+a = 120
+c = int(a/2)
+d = 5
+width2 = int(width/2)
+height2 = int(height/2)
+buttons_list.append(('start', (width2-c, height2, a, c), DPURPLE, PURPLE))
+buttons_list.append(('quit', ((width2)-c, height2 + a, a, c), DPURPLE, PURPLE))
+
+def draw_button(lict, mouz):
+    for but in lict:
+        if dead_inside(but[1], mouz):
+            pygame.draw.rect(screen, but[3], but[1])
+            pygame.draw.rect(screen, WHITE, (but[1][0]-d, but[1][1] - d, a+2*d, c+2*d), d)
+        else:
+            pygame.draw.rect(screen, but[2], but[1])
+            pygame.draw.rect(screen, WHITE, (but[1][0] - d, but[1][1] - d, a + 2 * d, c + 2 * d), d)
+        font = pygame.font.SysFont('lobster', 55)
+        text = font.render(but[0], False, (0, 0, 0))
+
+        screen.blit(text, (but[1][0]+a/8, but[1][1]+a/10))
+
+
+def dead_inside(tup, mouz):
+    if tup[0] < mouz[0] < tup[0] + tup[2] and tup[1] < mouz[1] < tup[1] + tup[3]:
+        return True
+    return False
 
 class figures:
     def __init__(self, type, left_side):
@@ -338,7 +375,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
                     figure_list[-1][0].coordinates[0] = [t[0] - 1, t[1] - 1]
             elif figure_list[-1][0].orientation % 4 == 3:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 2][
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
                     figure_list[-1][0].coordinates[1][1]] == 1:
                     right_rotate_trigger = False
                 if right_rotate_trigger:
@@ -358,7 +395,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
                     figure_list[-1][0].coordinates[0] = [t[0] + 1, t[1] + 1]
             elif figure_list[-1][0].orientation % 4 == 1:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 3][
+                if collision_list[figure_list[-1][0].coordinates[1][0]][
                     figure_list[-1][0].coordinates[1][1]] == 1:
                     right_rotate_trigger = False
                 if right_rotate_trigger:
@@ -585,7 +622,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[2]
                     figure_list[-1][0].coordinates[2] = [t[0] + 1, t[1] - 1]
             elif figure_list[-1][0].orientation % 4 == 1:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                if collision_list[figure_list[-1][0].coordinates[1][0]][
                     figure_list[-1][0].coordinates[1][1]] == 1:
                     left_rotate_trigger = False
                 if left_rotate_trigger:
@@ -839,8 +876,9 @@ def fix_bad_column(A, B):
             A[i][elem] = 0
     return A
 
-
+nfl_t = 0
 figure_list = list()
+next_figure_list = list()
 static_figure_list = list()
 clock = pygame.time.Clock()
 finished = False
@@ -850,9 +888,6 @@ for i in range(len(collision_list)):
     for j in range(len(collision_list[i])):
         if j == len(collision_list[i]) - 4 or i == 0 or i == len(collision_list) - 1:
             collision_list[i][j] = 1
-for i in range(len(collision_list)):
-    print(collision_list[i])
-print(collision_list[0][12])
 fast_move_down_trigger = False
 fast_move_down_tick = 0
 fast_move_left_tick = 0
@@ -873,18 +908,25 @@ while not finished:
         current_type = choice(types)
         if current_type == 'square':
             figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
+            next_figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
         elif current_type == 'stick':
             figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
+            next_figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
         else:
             figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
+            next_figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
     if time_counter % 10 == 0:
         for fig in figure_list:
             move_trigger = True
             add_trigger = False
             touch_time = 0
+            if nfl_t > 0:
+                next_figure_list.remove(fig)
+                nfl_t = 0
             for square in fig[0].coordinates:
                 if collision_list[square[0] + 1][square[1] + 1] == 1:
                     move_trigger = False
+                    nfl_t = 1
             if move_trigger:
                 fig[0].__move__()
             else:
@@ -900,11 +942,14 @@ while not finished:
                     pass
                 current_type = choice(types)
                 if current_type == 'square':
-                    figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
+                    figure_list.append(next_figure_list[0])
+                    next_figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
                 elif current_type == 'stick':
-                    figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
+                    figure_list.append(next_figure_list[0])
+                    next_figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
                 else:
-                    figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
+                    figure_list.append(next_figure_list[0])
+                    next_figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finished = True
@@ -976,29 +1021,36 @@ while not finished:
             for full_string in full_string_set:
                 if square[1] == full_string:
                     delete_full_string_list.append([square[0], square[1]])
-    if len(delete_full_string_list) != 0:
-        print('len(del):', len(delete_full_string_list))
-        print('del', delete_full_string_list)
-        for i in range(len(static_figure_list)):
-            print('static', static_figure_list[i][0].coordinates)
     for i in range(len(delete_full_string_list)):
-        print('i =', i)
         pops = 0
         for fig in static_figure_list:
             for j in range(len(fig[0].coordinates) - pops):
                 j = j - pops
-                print('j = ', j)
-                print('coord', fig[0].coordinates[j][0])
-                print('del', delete_full_string_list[i][0])
-                #print(fig[0].coordinates[j][1])
-                #print(delete_full_string_list[i][1])
                 if fig[0].coordinates[j][0] == delete_full_string_list[i][0] and fig[0].coordinates[j][1] == \
                         delete_full_string_list[i][1]:
-                    print('asdfaf')
                     fig[0].coordinates.pop(j)
                     pops += 1
-
     fix_bad_column(collision_list, full_string_set)
+
+    full_string_list = list()
+    for elem in full_string_set:
+        full_string_list.append(elem)
+    if len(full_string_set) > 0:
+        print(full_string_list)
+    full_string_list.sort()
+    for i in range(len(full_string_list)):
+        for j in range(len(static_figure_list)):
+            for square in static_figure_list[j][0].coordinates:
+                if square[1] < full_string_list[i]:
+                    square[1] += 1
+    collision_list = [[0] * 24 for i in range(12)]
+    for i in range(len(collision_list)):
+        for j in range(len(collision_list[i])):
+            if j == len(collision_list[i]) - 4 or i == 0 or i == len(collision_list) - 1:
+                collision_list[i][j] = 1
+    for i in range(len(static_figure_list)):
+        for square in static_figure_list[i][0].coordinates:
+            collision_list[square[0]+1][square[1]] = 1
     full_string_set = set()
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):

@@ -14,7 +14,7 @@ pygame.init()
 class PlayingField:
     def __init__(self):
         # display window parameters
-        self.w = 400
+        w = 400
         self.h = 600
         # border shift parameters
         self.x1 = 4
