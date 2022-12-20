@@ -51,8 +51,7 @@ def draw_button(lict, mouz):
             pygame.draw.rect(screen, but[2], but[1])
             pygame.draw.rect(screen, WHITE, (but[1][0] - d, but[1][1] - d, a + 2 * d, c + 2 * d), d)
         font = pygame.font.SysFont('lobster', 55)
-        text = font.render(but[0], False,
-                           (0, 0, 0))
+        text = font.render(but[0], False, (0, 0, 0))
 
         screen.blit(text, (but[1][0]+a/8, but[1][1]+a/10))
 
