@@ -1,8 +1,9 @@
 import time
-import pygame
-import keyboard
-from pygame.draw import *
 from random import *
+
+import keyboard
+import pygame
+from pygame.draw import *
 
 pygame.init()
 FPS = 30
@@ -327,7 +328,7 @@ def rotate():
                                                          figure_list[-1][0].coordinates[3][1] + 2]
         if figure_list[-1][0].type == 't_figure':
             if figure_list[-1][0].orientation % 4 == 0:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 2][
                     figure_list[-1][0].coordinates[1][1] - 1] == 1:
                     right_rotate_trigger = False
                 if right_rotate_trigger:
@@ -337,7 +338,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
                     figure_list[-1][0].coordinates[0] = [t[0] - 1, t[1] - 1]
             elif figure_list[-1][0].orientation % 4 == 3:
-                if collision_list[figure_list[-1][0].coordinates[1][0]][
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 2][
                     figure_list[-1][0].coordinates[1][1]] == 1:
                     right_rotate_trigger = False
                 if right_rotate_trigger:
@@ -347,7 +348,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
                     figure_list[-1][0].coordinates[0] = [t[0] + 1, t[1] - 1]
             elif figure_list[-1][0].orientation % 4 == 2:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 2][
                     figure_list[-1][0].coordinates[1][1] + 1] == 1:
                     right_rotate_trigger = False
                 if right_rotate_trigger:
@@ -357,7 +358,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
                     figure_list[-1][0].coordinates[0] = [t[0] + 1, t[1] + 1]
             elif figure_list[-1][0].orientation % 4 == 1:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 2][
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 3][
                     figure_list[-1][0].coordinates[1][1]] == 1:
                     right_rotate_trigger = False
                 if right_rotate_trigger:
@@ -574,7 +575,7 @@ def rotate():
 
         if figure_list[-1][0].type == 't_figure':
             if figure_list[-1][0].orientation % 4 == 0:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 2][
                     figure_list[-1][0].coordinates[1][1] - 1] == 1:
                     left_rotate_trigger = False
                 if left_rotate_trigger:
@@ -584,7 +585,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[2]
                     figure_list[-1][0].coordinates[2] = [t[0] + 1, t[1] - 1]
             elif figure_list[-1][0].orientation % 4 == 1:
-                if collision_list[figure_list[-1][0].coordinates[1][0]][
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
                     figure_list[-1][0].coordinates[1][1]] == 1:
                     left_rotate_trigger = False
                 if left_rotate_trigger:
@@ -594,7 +595,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[2]
                     figure_list[-1][0].coordinates[2] = [t[0] - 1, t[1] - 1]
             elif figure_list[-1][0].orientation % 4 == 2:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 2][
                     figure_list[-1][0].coordinates[1][1] + 1] == 1:
                     left_rotate_trigger = False
                 if left_rotate_trigger:
@@ -820,30 +821,23 @@ def is_bad_column(A):
     column_counter = 0
     column_trigger = True
     column_set = set()
-    for j in range(len(A[0]) - 1):
-        for i in range(len(A)):
-            if A[i][j] == 0:
-                column_trigger = False
-        if column_trigger:
-            column_counter += 1
-            column_set.add(j)
-        column_trigger = True
+    for j in range(len(A[0])):
+        if j != len(A[0]) - 4:
+            for i in range(len(A)):
+                if A[i][j] == 0:
+                    column_trigger = False
+            if column_trigger:
+                column_counter += 1
+                column_set.add(j)
+            column_trigger = True
     return column_counter, column_set
 
 
-def is_bad_column(A):
-    column_counter = 0
-    column_trigger = True
-    column_set = set()
-    for j in range(len(A[0]) - 1):
-        for i in range(len(A)):
-            if A[i][j] == 0:
-                column_trigger = False
-        if column_trigger:
-            column_counter += 1
-            column_set.add(j)
-        column_trigger = True
-    return column_counter, column_set
+def fix_bad_column(A, B):
+    for elem in B:
+        for i in range(1, len(A) - 1):
+            A[i][elem] = 0
+    return A
 
 
 figure_list = list()
@@ -851,10 +845,10 @@ static_figure_list = list()
 clock = pygame.time.Clock()
 finished = False
 time_counter = 0
-collision_list = [[0] * 21 for i in range(12)]
+collision_list = [[0] * 24 for i in range(12)]
 for i in range(len(collision_list)):
     for j in range(len(collision_list[i])):
-        if j == len(collision_list[i]) - 1 or i == 0 or i == len(collision_list) - 1:
+        if j == len(collision_list[i]) - 4 or i == 0 or i == len(collision_list) - 1:
             collision_list[i][j] = 1
 for i in range(len(collision_list)):
     print(collision_list[i])
@@ -973,13 +967,38 @@ while not finished:
                     move_down_trigger2 = False
             if move_down_trigger2:
                 figure_list[-1][0].__move_right__()
+    # for i in range(len(collision_list)):
+    # print(collision_list[i])
     full_string_counter, full_string_set = is_bad_column(collision_list)
-    for full_string in full_string_set:
-        for fig in static_figure_list:
-            for square in fig[0].coordinates:
+    delete_full_string_list = list()
+    for fig in static_figure_list:
+        for square in fig[0].coordinates:
+            for full_string in full_string_set:
                 if square[1] == full_string:
-                    fig[0].coordinates.remove(square)
-    print(full_string_counter, full_string_set)
+                    delete_full_string_list.append([square[0], square[1]])
+    if len(delete_full_string_list) != 0:
+        print('len(del):', len(delete_full_string_list))
+        print('del', delete_full_string_list)
+        for i in range(len(static_figure_list)):
+            print('static', static_figure_list[i][0].coordinates)
+    for i in range(len(delete_full_string_list)):
+        print('i =', i)
+        pops = 0
+        for fig in static_figure_list:
+            for j in range(len(fig[0].coordinates) - pops):
+                j = j - pops
+                print('j = ', j)
+                print('coord', fig[0].coordinates[j][0])
+                print('del', delete_full_string_list[i][0])
+                #print(fig[0].coordinates[j][1])
+                #print(delete_full_string_list[i][1])
+                if fig[0].coordinates[j][0] == delete_full_string_list[i][0] and fig[0].coordinates[j][1] == \
+                        delete_full_string_list[i][1]:
+                    print('asdfaf')
+                    fig[0].coordinates.pop(j)
+                    pops += 1
+    fix_bad_column(collision_list, full_string_set)
+    full_string_set = set()
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
