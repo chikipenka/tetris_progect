@@ -850,9 +850,6 @@ for i in range(len(collision_list)):
     for j in range(len(collision_list[i])):
         if j == len(collision_list[i]) - 4 or i == 0 or i == len(collision_list) - 1:
             collision_list[i][j] = 1
-for i in range(len(collision_list)):
-    print(collision_list[i])
-print(collision_list[0][12])
 fast_move_down_trigger = False
 fast_move_down_tick = 0
 fast_move_left_tick = 0
@@ -986,19 +983,26 @@ while not finished:
                     fig[0].coordinates.pop(j)
                     pops += 1
     fix_bad_column(collision_list, full_string_set)
+
+    full_string_list = list()
+    for elem in full_string_set:
+        full_string_list.append(elem)
     if len(full_string_set) > 0:
-        print(full_string_counter)
-        highest_full_string = min(full_string_set)
-        for i in range(len(static_figure_list)):
-            for square in static_figure_list[i][0].coordinates:
-                if square[1] < highest_full_string:
-                    square[1] += full_string_counter
-        for j in range(19, -1, -1):
-            if j >= highest_full_string:
-                for i in range(1, len(collision_list) - 1):
-                        print(j, highest_full_string)
-                        collision_list[i][j + 1] = 1
-                        collision_list[i][j] = 0
+        print(full_string_list)
+    full_string_list.sort()
+    for i in range(len(full_string_list)):
+        for j in range(len(static_figure_list)):
+            for square in static_figure_list[j][0].coordinates:
+                if square[1] < full_string_list[i]:
+                    square[1] += 1
+    collision_list = [[0] * 24 for i in range(12)]
+    for i in range(len(collision_list)):
+        for j in range(len(collision_list[i])):
+            if j == len(collision_list[i]) - 4 or i == 0 or i == len(collision_list) - 1:
+                collision_list[i][j] = 1
+    for i in range(len(static_figure_list)):
+        for square in static_figure_list[i][0].coordinates:
+            collision_list[square[0]+1][square[1]] = 1
     full_string_set = set()
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
