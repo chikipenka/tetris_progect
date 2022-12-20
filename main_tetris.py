@@ -997,6 +997,7 @@ while not finished:
                     print('asdfaf')
                     fig[0].coordinates.pop(j)
                     pops += 1
+
     fix_bad_column(collision_list, full_string_set)
     full_string_set = set()
     for fig in figure_list:
