@@ -1,10 +1,10 @@
 import time
+from pathlib import Path
 from random import *
 
 import keyboard
 import pygame
 from pygame.draw import *
-from pathlib import Path
 
 pygame.init()
 FPS = 30
@@ -23,9 +23,11 @@ y1 = 6
 y2 = 2
 # variable texts (start value)
 score = 0
-LVL = 0
+lvl0 = 1
+LVL = lvl0
 TRT = 0
 Line = 0
+trt_score = 0
 # Nickname
 print("Please enter your nickname:")
 nick_n = 'huy'
@@ -51,7 +53,7 @@ PINK = (245, 125, 245)
 GREEN = (0, 255, 26)
 FGREN = (35, 185, 105)
 MALINA = (185, 35, 130)
-GREY = (47,79,79)
+GREY = (47, 79, 79)
 
 COLORS = [[BLUE, RED], [PURPLE, DPURPLE], [RED, YELLOW], [BLUWUE, BLUE], [GREN, GREENY], [PURPLE, PINK], [BLUE, GREEN],
           [MALINA, FGREN]]
@@ -66,7 +68,7 @@ screen.fill((15, 10, 30))
 font1 = pygame.font.SysFont("Courier New", 24, bold=True)
 font2 = pygame.font.SysFont("Courier New", 28, bold=True)
 
-#menu
+# menu
 path = Path('dog.jpg')
 dog_surf = pygame.image.load(path)
 dog_surf = pygame.transform.scale(dog_surf, (400, 600))
@@ -75,31 +77,33 @@ dog_rect = dog_surf.get_rect(
 
 buttons_list = []
 a = 120
-c = int(a/2)
+c = int(a / 2)
 d = 5
-width2 = int(width/2)
-height2 = int(height/2)
-buttons_list.append(('start', (width2-c, height2, a, c), DPURPLE, PURPLE))
-buttons_list.append(('quit', ((width2)-c, height2 + a, a, c), DPURPLE, PURPLE))
+width2 = int(width / 2)
+height2 = int(height / 2)
+buttons_list.append(('start', (width2 - c, height2, a, c), DPURPLE, PURPLE))
+buttons_list.append(('quit', ((width2) - c, height2 + a, a, c), DPURPLE, PURPLE))
+
 
 def draw_button(lict, mouz):
     for but in lict:
         if dead_inside(but[1], mouz):
             pygame.draw.rect(screen, but[3], but[1])
-            pygame.draw.rect(screen, WHITE, (but[1][0]-d, but[1][1] - d, a+2*d, c+2*d), d)
+            pygame.draw.rect(screen, WHITE, (but[1][0] - d, but[1][1] - d, a + 2 * d, c + 2 * d), d)
         else:
             pygame.draw.rect(screen, but[2], but[1])
             pygame.draw.rect(screen, WHITE, (but[1][0] - d, but[1][1] - d, a + 2 * d, c + 2 * d), d)
         font = pygame.font.SysFont('lobster', 55)
         text = font.render(but[0], False, (0, 0, 0))
 
-        screen.blit(text, (but[1][0]+a/8, but[1][1]+a/10))
+        screen.blit(text, (but[1][0] + a / 8, but[1][1] + a / 10))
 
 
 def dead_inside(tup, mouz):
     if tup[0] < mouz[0] < tup[0] + tup[2] and tup[1] < mouz[1] < tup[1] + tup[3]:
         return True
     return False
+
 
 class figures:
     def __init__(self, type, left_side):
@@ -375,7 +379,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
                     figure_list[-1][0].coordinates[0] = [t[0] - 1, t[1] - 1]
             elif figure_list[-1][0].orientation % 4 == 3:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                if collision_list[figure_list[-1][0].coordinates[1][0] + 2][
                     figure_list[-1][0].coordinates[1][1]] == 1:
                     right_rotate_trigger = False
                 if right_rotate_trigger:
@@ -876,6 +880,7 @@ def fix_bad_column(A, B):
             A[i][elem] = 0
     return A
 
+
 nfl_t = 0
 figure_list = list()
 next_figure_list = list()
@@ -903,7 +908,14 @@ while not finished:
     nick_name(nick_n, clr3, font1)
     clock.tick(FPS)
     time_counter += 1
-    level_color = 1
+    level_color = (LVL - 1) % len(COLORS)
+    LVL = int(Line / 5) + lvl0
+    if LVL <= 15:
+        lvl_speed = 17 - LVL
+    else:
+        lvl_speed = 2
+    if Line != 0:
+        TRT = int(trt_score / score * 100)
     if time_counter == 20:
         current_type = choice(types)
         if current_type == 'square':
@@ -915,7 +927,7 @@ while not finished:
         else:
             figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
             next_figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
-    if time_counter % 10 == 0:
+    if time_counter % lvl_speed == 0:
         for fig in figure_list:
             move_trigger = True
             add_trigger = False
@@ -995,7 +1007,7 @@ while not finished:
     if previous_statick_figure_list_len != current_statick_figure_list_len:
         fast_move_left_tick = time.time()
     if keyboard.is_pressed('left'):
-        if time.time() - fast_move_left_tick > 0.2 and fast_move_left_tick != 0:
+        if time.time() - fast_move_left_tick > 0.1 and fast_move_left_tick != 0:
             move_down_trigger2 = True
             for square in figure_list[-1][0].coordinates:
                 if collision_list[square[0]][square[1]] == 1:
@@ -1005,7 +1017,7 @@ while not finished:
     if previous_statick_figure_list_len != current_statick_figure_list_len:
         fast_move_right_tick = time.time()
     if keyboard.is_pressed('right'):
-        if time.time() - fast_move_right_tick > 0.2 and fast_move_right_tick != 0:
+        if time.time() - fast_move_right_tick > 0.1 and fast_move_right_tick != 0:
             move_down_trigger2 = True
             for square in figure_list[-1][0].coordinates:
                 if collision_list[square[0] + 2][square[1]] == 1:
@@ -1021,6 +1033,16 @@ while not finished:
             for full_string in full_string_set:
                 if square[1] == full_string:
                     delete_full_string_list.append([square[0], square[1]])
+    Line += int(len(delete_full_string_list)/10)
+    if len(delete_full_string_list) == 10:
+        score += 760
+    elif len(delete_full_string_list) == 20:
+        score += 1900
+    elif len(delete_full_string_list) == 30:
+        score += 5700
+    elif len(delete_full_string_list) == 40:
+        score += 22800
+        trt_score += 22800
     for i in range(len(delete_full_string_list)):
         pops = 0
         for fig in static_figure_list:
@@ -1050,7 +1072,7 @@ while not finished:
                 collision_list[i][j] = 1
     for i in range(len(static_figure_list)):
         for square in static_figure_list[i][0].coordinates:
-            collision_list[square[0]+1][square[1]] = 1
+            collision_list[square[0] + 1][square[1]] = 1
     full_string_set = set()
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
