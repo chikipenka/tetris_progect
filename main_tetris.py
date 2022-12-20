@@ -976,29 +976,29 @@ while not finished:
             for full_string in full_string_set:
                 if square[1] == full_string:
                     delete_full_string_list.append([square[0], square[1]])
-    if len(delete_full_string_list) != 0:
-        print('len(del):', len(delete_full_string_list))
-        print('del', delete_full_string_list)
-        for i in range(len(static_figure_list)):
-            print('static', static_figure_list[i][0].coordinates)
     for i in range(len(delete_full_string_list)):
-        print('i =', i)
         pops = 0
         for fig in static_figure_list:
             for j in range(len(fig[0].coordinates) - pops):
                 j = j - pops
-                print('j = ', j)
-                print('coord', fig[0].coordinates[j][0])
-                print('del', delete_full_string_list[i][0])
-                #print(fig[0].coordinates[j][1])
-                #print(delete_full_string_list[i][1])
                 if fig[0].coordinates[j][0] == delete_full_string_list[i][0] and fig[0].coordinates[j][1] == \
                         delete_full_string_list[i][1]:
-                    print('asdfaf')
                     fig[0].coordinates.pop(j)
                     pops += 1
-
     fix_bad_column(collision_list, full_string_set)
+    if len(full_string_set) > 0:
+        print(full_string_counter)
+        highest_full_string = min(full_string_set)
+        for i in range(len(static_figure_list)):
+            for square in static_figure_list[i][0].coordinates:
+                if square[1] < highest_full_string:
+                    square[1] += full_string_counter
+        for j in range(19, -1, -1):
+            if j >= highest_full_string:
+                for i in range(1, len(collision_list) - 1):
+                        print(j, highest_full_string)
+                        collision_list[i][j + 1] = 1
+                        collision_list[i][j] = 0
     full_string_set = set()
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
