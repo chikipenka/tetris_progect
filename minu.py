@@ -61,31 +61,6 @@ def dead_inside(tup, mouz):
         return True
     return False
 
-
-# white color
-color = (255, 255, 255)
-
-# light shade of the button
-color_light = (170, 170, 170)
-
-# dark shade of the button
-color_dark = (100, 100, 100)
-
-# stores the width of the
-# screen into a variable
-width = screen.get_width()
-
-# stores the height of the
-# screen into a variable
-height = screen.get_height()
-
-# defining a font
-smallfont = pygame.font.SysFont('Corbel', 35)
-
-# rendering a text written in
-# this font
-text = smallfont.render('quit', True, color)
-
 while True:
 
     for ev in pygame.event.get():
@@ -103,6 +78,7 @@ while True:
                 print("nachat igru")
 
             if dead_inside(buttons_list[1][1], mouse):
+                print('paka')
                 pygame.quit()
 
     pygame.display.update()
