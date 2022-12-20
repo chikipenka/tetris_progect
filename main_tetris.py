@@ -4,6 +4,7 @@ from random import *
 import keyboard
 import pygame
 from pygame.draw import *
+from pathlib import Path
 
 pygame.init()
 FPS = 30
@@ -50,6 +51,8 @@ PINK = (245, 125, 245)
 GREEN = (0, 255, 26)
 FGREN = (35, 185, 105)
 MALINA = (185, 35, 130)
+GREY = (47,79,79)
+
 COLORS = [[BLUE, RED], [PURPLE, DPURPLE], [RED, YELLOW], [BLUWUE, BLUE], [GREN, GREENY], [PURPLE, PINK], [BLUE, GREEN],
           [MALINA, FGREN]]
 types = ['square', 'left_z_figure', 'right_z_figure', 'left_l_figure', 'right_l_figure', 't_figure', 'stick']
@@ -63,6 +66,40 @@ screen.fill((15, 10, 30))
 font1 = pygame.font.SysFont("Courier New", 24, bold=True)
 font2 = pygame.font.SysFont("Courier New", 28, bold=True)
 
+#menu
+path = Path('dog.jpg')
+dog_surf = pygame.image.load(path)
+dog_surf = pygame.transform.scale(dog_surf, (400, 600))
+dog_rect = dog_surf.get_rect(
+    bottomright=(width, height))
+
+buttons_list = []
+a = 120
+c = int(a/2)
+d = 5
+width2 = int(width/2)
+height2 = int(height/2)
+buttons_list.append(('start', (width2-c, height2, a, c), DPURPLE, PURPLE))
+buttons_list.append(('quit', ((width2)-c, height2 + a, a, c), DPURPLE, PURPLE))
+
+def draw_button(lict, mouz):
+    for but in lict:
+        if dead_inside(but[1], mouz):
+            pygame.draw.rect(screen, but[3], but[1])
+            pygame.draw.rect(screen, WHITE, (but[1][0]-d, but[1][1] - d, a+2*d, c+2*d), d)
+        else:
+            pygame.draw.rect(screen, but[2], but[1])
+            pygame.draw.rect(screen, WHITE, (but[1][0] - d, but[1][1] - d, a + 2 * d, c + 2 * d), d)
+        font = pygame.font.SysFont('lobster', 55)
+        text = font.render(but[0], False, (0, 0, 0))
+
+        screen.blit(text, (but[1][0]+a/8, but[1][1]+a/10))
+
+
+def dead_inside(tup, mouz):
+    if tup[0] < mouz[0] < tup[0] + tup[2] and tup[1] < mouz[1] < tup[1] + tup[3]:
+        return True
+    return False
 
 class figures:
     def __init__(self, type, left_side):
