@@ -971,6 +971,12 @@ while not finished:
             if event.key == pygame.K_DOWN:
                 fast_move_down_trigger = True
                 fast_move_down_tick = time.time()
+                move_right_trigger2 = True
+                for square in figure_list[-1][0].coordinates:
+                    if collision_list[square[0]][square[1]+1] == 1:
+                        move_right_trigger2 = False
+                if move_right_trigger2:
+                    figure_list[-1][0].__move_down__()
     if previous_statick_figure_list_len != current_statick_figure_list_len:
         fast_move_down_tick = time.time()
     if keyboard.is_pressed('down'):
