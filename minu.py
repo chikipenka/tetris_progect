@@ -1,5 +1,10 @@
 import pygame
+from main_tetris import start
+import time
 from pathlib import Path
+from random import *
+import keyboard
+from pygame.draw import *
 
 path = Path('dog.jpg')
 
@@ -71,9 +76,11 @@ def dead_inside(tup, mouz):
     return False
 
 user_text = ''
-level = ''
+level = '1'
 clock = pygame.time.Clock()
 finished = False
+
+
 while True:
 
     for ev in pygame.event.get():
@@ -131,6 +138,7 @@ while True:
 
             if dead_inside(buttons_list[0][1], mouse):
                 print("nachat igru")
+                start(int(level), default_name)
 
 
 
