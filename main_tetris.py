@@ -67,6 +67,7 @@ screen.fill((15, 10, 30))
 # and size of the font
 font1 = pygame.font.SysFont("Courier New", 24, bold=True)
 font2 = pygame.font.SysFont("Courier New", 28, bold=True)
+font3 = pygame.font.SysFont("Courier New", 54, bold=True)
 
 # menu
 path = Path('dog.jpg')
@@ -881,6 +882,7 @@ def fix_bad_column(A, B):
     return A
 
 
+del_triger = 0
 nfl_t = 0
 figure_list = list()
 next_figure_list = list()
@@ -898,7 +900,29 @@ fast_move_down_tick = 0
 fast_move_left_tick = 0
 fast_move_right_tick = 0
 previous_statick_figure_list_len = 0
+t1 = 0
+del_trig_cnt = 0
+game_over_trig = 0
 while not finished:
+    for i in range(1, 10):
+        if collision_list[i][0] == 1:
+            finished = True
+            game_over_trig = 1
+    if del_triger == 1:
+        del_trig_cnt += 1
+        if del_trig_cnt == 1:
+            t1 = time.time()
+            rect(screen, (255, 255, 255),
+                 (180 / 405 * width, 125 / 630 * height, 220 / 405 * width, 446 / 630 * height))
+        else:
+            rect(screen, (255, 255, 255),
+                 (180 / 405 * width, 125 / 630 * height, 220 / 405 * width, 446 / 630 * height))
+    if 0.05 < (time.time() - t1) < 0.08 or (time.time() - t1) > 0.13:
+        del_triger = 0
+    else:
+        del_triger = 1
+    if (time.time() - t1) > 0.13:
+        del_trig_cnt = 0
     current_statick_figure_list_len = len(static_figure_list)
     drawer()
     scorer_draw(score, clr3, font1)
@@ -1033,7 +1057,8 @@ while not finished:
             for full_string in full_string_set:
                 if square[1] == full_string:
                     delete_full_string_list.append([square[0], square[1]])
-    Line += int(len(delete_full_string_list)/10)
+                    del_triger = 1
+    Line += int(len(delete_full_string_list) / 10)
     if len(delete_full_string_list) == 10:
         score += 760
     elif len(delete_full_string_list) == 20:
@@ -1099,5 +1124,19 @@ while not finished:
     previous_statick_figure_list_len = current_statick_figure_list_len
     pygame.display.update()
     screen.fill((15, 10, 30))
+if game_over_trig == 1:
+    while finished:
+        screen.fill((80, 20, 40))
+        text1 = font3.render('GAME OVER', True, (0, 0, 0))
+        textRect1 = text1.get_rect()
+        textRect1.center = (0.5 * width, 0.5 * height)
+        screen.blit(text1, textRect1)
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                finished = False
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_ESCAPE:
+                    finished = False
 print('Huy')
 pygame.quit()
