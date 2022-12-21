@@ -13,6 +13,9 @@ pygame.font.init()
 # check whether font is initialized
 # or not
 pygame.font.get_init()
+# image
+img = pygame.image.load('gameover.jpg')
+fopf = pygame.image.load('flag.jpg')
 # display window parameters
 width = 400
 height = 600
@@ -166,7 +169,7 @@ class figures:
 
 
 def rotate():
-    if event.key == pygame.K_n:
+    if event.key == pygame.K_d:
         right_rotate_trigger = True
         if figure_list[-1][0].type == 'stick':
             if figure_list[-1][0].orientation % 4 == 1:
@@ -410,7 +413,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
                     figure_list[-1][0].coordinates[0] = [t[0] - 1, t[1] + 1]
 
-    elif event.key == pygame.K_m:
+    elif event.key == pygame.K_s:
         # вращение против часовой стрелки
         left_rotate_trigger = True
         if figure_list[-1][0].type == 'stick':
@@ -657,7 +660,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[2]
                     figure_list[-1][0].coordinates[2] = [t[0] + 1, t[1] + 1]
 
-    if event.key == pygame.K_m or event.key == pygame.K_n:
+    if event.key == pygame.K_s or event.key == pygame.K_d:
         left_rotate_trigger = True
         if figure_list[-1][0].type == 'left_z_figure':
             if figure_list[-1][0].orientation % 2 == 0:
@@ -854,6 +857,7 @@ def drawer():
     rect(screen, clr2, (182 / 405 * width, 579 / 630 * height, (220 - x1) / 405 * width, (49 - y1) / 630 * height), 2)
     rect(screen, clr2, (181 / 405 * width, 577 / 630 * height, (220 - x2) / 405 * width, (49 - y2) / 630 * height), 1)
     # Flag
+    screen.blit(fopf, (95 / 405 * width, 565 / 630 * height))
     rect(screen, clr1, (80 / 405 * width, 560 / 630 * height, 95 / 405 * width, 64 / 630 * height), 5)
     rect(screen, clr2, (83 / 405 * width, 563 / 630 * height, (95 - x1) / 405 * width, (63 - y1) / 630 * height), 2)
     rect(screen, clr2, (81 / 405 * width, 561 / 630 * height, (95 - x2) / 405 * width, (63 - y2) / 630 * height), 1)
@@ -903,9 +907,10 @@ previous_statick_figure_list_len = 0
 t1 = 0
 del_trig_cnt = 0
 game_over_trig = 0
+pause_trigger = False
 while not finished:
     for i in range(1, 10):
-        if collision_list[i][0] == 1:
+        if collision_list[i][-1] == 1:
             finished = True
             game_over_trig = 1
     if del_triger == 1:
@@ -1279,10 +1284,22 @@ while not finished:
     screen.fill((15, 10, 30))
 if game_over_trig == 1:
     while finished:
-        screen.fill((80, 20, 40))
+        screen.blit(img, (0, 0))
         text1 = font3.render('GAME OVER', True, (0, 0, 0))
         textRect1 = text1.get_rect()
-        textRect1.center = (0.5 * width, 0.5 * height)
+        textRect1.center = (0.5 * width, 0.3 * height)
+        screen.blit(text1, textRect1)
+        text1 = font1.render('играл', True, (255, 255, 255))
+        textRect1 = text1.get_rect()
+        textRect1.center = (0.15 * width, 0.75 * height)
+        screen.blit(text1, textRect1)
+        text1 = font1.render('и', True, (0, 0, 0))
+        textRect1 = text1.get_rect()
+        textRect1.center = (0.515 * width, 0.75 * height)
+        screen.blit(text1, textRect1)
+        text1 = font1.render('проиграл', True, (255, 255, 255))
+        textRect1 = text1.get_rect()
+        textRect1.center = (0.85 * width, 0.75 * height)
         screen.blit(text1, textRect1)
         pygame.display.update()
         for event in pygame.event.get():
