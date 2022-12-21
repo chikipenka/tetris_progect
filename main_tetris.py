@@ -5,6 +5,10 @@ from random import *
 import keyboard
 import pygame
 from pygame.draw import *
+file = 'delete.mp3'
+
+pygame.mixer.init()
+pygame.mixer.music.load(file)
 
 pygame.init()
 FPS = 30
@@ -30,7 +34,7 @@ lvl0 = 1
 LVL = lvl0
 TRT = 0
 Line = 0
-trt_score = 0
+trt_line = 0
 # Nickname
 print("Please enter your nickname:")
 nick_n = 'huy'
@@ -944,7 +948,7 @@ while not finished:
     else:
         lvl_speed = 2
     if Line != 0:
-        TRT = int(trt_score / score * 100)
+        TRT = int(trt_line / Line * 100)
     if time_counter == 20:
         current_type = choice(types)
         if current_type == 'square':
@@ -1072,7 +1076,8 @@ while not finished:
         score += 5700
     elif len(delete_full_string_list) == 40:
         score += 22800
-        trt_score += 22800
+        trt_line += 4
+        pygame.mixer.music.play()
     for i in range(len(delete_full_string_list)):
         pops = 0
         for fig in static_figure_list:
