@@ -5,10 +5,9 @@ from random import *
 import keyboard
 import pygame
 from pygame.draw import *
-file = 'delete.mp3'
-
+file = 'tetris_sound.mp3'
+File = 'tetris_sound2.mp3'
 pygame.mixer.init()
-pygame.mixer.music.load(file)
 
 pygame.init()
 FPS = 30
@@ -37,7 +36,7 @@ Line = 0
 trt_line = 0
 # Nickname
 print("Please enter your nickname:")
-nick_n = 'huy'
+nick_n = ''
 # main(first) border colour
 clr1 = (105, 235, 175)
 # second border colour
@@ -1067,6 +1066,8 @@ while not finished:
                 if square[1] == full_string:
                     delete_full_string_list.append([square[0], square[1]])
                     del_triger = 1
+                    pygame.mixer.music.load(File)
+                    pygame.mixer.music.play()
     Line += int(len(delete_full_string_list) / 10)
     if len(delete_full_string_list) == 10:
         score += 760
@@ -1077,6 +1078,7 @@ while not finished:
     elif len(delete_full_string_list) == 40:
         score += 22800
         trt_line += 4
+        pygame.mixer.music.load(file)
         pygame.mixer.music.play()
     for i in range(len(delete_full_string_list)):
         pops = 0
@@ -1313,5 +1315,4 @@ if game_over_trig == 1:
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     finished = False
-print('Huy')
 pygame.quit()
