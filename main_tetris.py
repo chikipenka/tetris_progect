@@ -1,16 +1,17 @@
-import pygame
 import time
 from pathlib import Path
 from random import *
+
 import keyboard
-from pygame.draw import *
 
-def start(LVL, nick_n):
+from playing_field import *
 
-    file = 'delete.mp3'
+
+def start(lvl, nick_n):
+    file = 'tetris_sound.mp3'
+    File = 'tetris_sound2.mp3'
 
     pygame.mixer.init()
-    pygame.mixer.music.load(file)
 
     pygame.init()
     FPS = 30
@@ -21,30 +22,15 @@ def start(LVL, nick_n):
     pygame.font.get_init()
     # image
     img = pygame.image.load('gameover.jpg')
-    fopf = pygame.image.load('flag.jpg')
-    # display window parameters
-    width = 400
-    height = 600
-    # border shift parameters
-    x1 = 4
-    x2 = 2
-    y1 = 6
-    y2 = 2
     # variable texts (start value)
-    score = 0
-    #lvl0 = 1
-    #LVL = lvl0
     TRT = 0
+    LVL = 1
     Line = 0
     trt_line = 0
-    # main(first) border colour
-    clr1 = (105, 235, 175)
-    # second border colour
-    clr2 = (35, 35, 35)
-    # Texts colour
-    clr3 = (255, 255, 255)
-    screen = pygame.display.set_mode((width, height))
+    score = 0
+
     square_side = 21 / 405 * width
+
     BLUE = (65, 105, 225)
     RED = (139, 0, 0)
     BLACK = (0, 0, 0)
@@ -61,7 +47,8 @@ def start(LVL, nick_n):
     MALINA = (185, 35, 130)
     GREY = (47, 79, 79)
 
-    COLORS = [[BLUE, RED], [PURPLE, DPURPLE], [RED, YELLOW], [BLUWUE, BLUE], [GREN, GREENY], [PURPLE, PINK], [BLUE, GREEN],
+    COLORS = [[BLUE, RED], [PURPLE, DPURPLE], [RED, YELLOW], [BLUWUE, BLUE], [GREN, GREENY], [PURPLE, PINK],
+              [BLUE, GREEN],
               [MALINA, FGREN]]
     types = ['square', 'left_z_figure', 'right_z_figure', 'left_l_figure', 'right_l_figure', 't_figure', 'stick']
     orientation = ['straight', 'left', 'right', 'bottom']
@@ -71,16 +58,13 @@ def start(LVL, nick_n):
     screen.fill((15, 10, 30))
     # Create a font file by passing font file
     # and size of the font
-    font1 = pygame.font.SysFont("Courier New", 24, bold=True)
-    font2 = pygame.font.SysFont("Courier New", 28, bold=True)
     font3 = pygame.font.SysFont("Courier New", 54, bold=True)
 
     # menu
     path = Path('dog.jpg')
     dog_surf = pygame.image.load(path)
     dog_surf = pygame.transform.scale(dog_surf, (400, 600))
-    dog_rect = dog_surf.get_rect(
-        bottomright=(width, height))
+    dog_rect = dog_surf.get_rect(bottomright=(width, height))
 
     buttons_list = []
     a = 120
@@ -89,10 +73,10 @@ def start(LVL, nick_n):
     width2 = int(width / 2)
     height2 = int(height / 2)
     buttons_list.append(('start', (width2 - c, height2, a, c), DPURPLE, PURPLE))
-    buttons_list.append(('quit', ((width2) - c, height2 + a, a, c), DPURPLE, PURPLE))
-
+    buttons_list.append(('quit', (width2 - c, height2 + a, a, c), DPURPLE, PURPLE))
 
     def draw_button(lict, mouz):
+        """рисует кнопку в меню"""
         for but in lict:
             if dead_inside(but[1], mouz):
                 pygame.draw.rect(screen, but[3], but[1])
@@ -105,14 +89,12 @@ def start(LVL, nick_n):
 
             screen.blit(text, (but[1][0] + a / 8, but[1][1] + a / 10))
 
-
     def dead_inside(tup, mouz):
         if tup[0] < mouz[0] < tup[0] + tup[2] and tup[1] < mouz[1] < tup[1] + tup[3]:
             return True
         return False
 
-
-    class figures:
+    class Figures:
         def __init__(self, type, left_side):
             if type == 'square':
                 self.type = 'square'
@@ -150,28 +132,28 @@ def start(LVL, nick_n):
 
         def __move_right__(self):
             right_move_trigger = True
-            for elem in (self.coordinates):
-                if elem[0] >= 9:
+            for element in self.coordinates:
+                if element[0] >= 9:
                     right_move_trigger = False
             if right_move_trigger:
-                for elem in (self.coordinates):
-                    elem[0] += 1
+                for element in self.coordinates:
+                    element[0] += 1
 
         def __move_left__(self):
             left_move_trigger = True
-            for elem in (self.coordinates):
-                if elem[0] <= 0:
+            for element in self.coordinates:
+                if element[0] <= 0:
                     left_move_trigger = False
             if left_move_trigger:
-                for elem in (self.coordinates):
-                    elem[0] -= 1
+                for element in self.coordinates:
+                    element[0] -= 1
 
         def __move_down__(self):
-            for elem in self.coordinates:
-                elem[1] += 1
-
+            for element in self.coordinates:
+                element[1] += 1
 
     def rotate():
+        """ Функция вращения вынесена из while для структуризации кода """
         if event.key == pygame.K_d:
             right_rotate_trigger = True
             if figure_list[-1][0].type == 'stick':
@@ -716,12 +698,11 @@ def start(LVL, nick_n):
                         figure_list[-1][0].coordinates[1] = [figure_list[-1][0].coordinates[1][0],
                                                              figure_list[-1][0].coordinates[1][1] + 2]
 
-
     def kvadratic_blik(x, y, a, i, color_type):
-        ''' i - номер в массиве, который зависит от уровня
+        """ i - номер в массиве, который зависит от уровня
         и x пусть меняется от xx до xx+ширина игрового поля
         y строго от yy
-        '''
+        """
         colors = COLORS[i]
         d = int(a // 10)
         pygame.draw.rect(screen, colors[color_type], (x, y, a, a))
@@ -735,9 +716,8 @@ def start(LVL, nick_n):
         pygame.draw.rect(screen, WHITE, (x + d + d, y + 2 * d + d, d, d))
         pygame.draw.rect(screen, WHITE, (x + d, y + d, d, d))
 
-
     def kvadratic_bigblik(x, y, a, i):
-        ''' i - номер в массиве, который зависит от уровня'''
+        """ i - номер в массиве, который зависит от уровня """
         colors = COLORS[i]
         d = int(a // 10)
         pygame.draw.rect(screen, colors[0], (x, y, a, a))
@@ -751,7 +731,6 @@ def start(LVL, nick_n):
         pygame.draw.rect(screen, WHITE, (x + d + d, y + d + d, a - 2 * d - 2 * d, a - 2 * d - 2 * d))
         pygame.draw.rect(screen, WHITE, (x + d, y + d, d, d))
 
-
     # a - ребро квадратика, нужно будет определить и поменять
     # xx, yy - координаты  левого верхнего угла игрового окнa
     def kvadratic(n, m, a, xx, yy):
@@ -762,111 +741,8 @@ def start(LVL, nick_n):
         y = yy + m * a
         return x, y
 
-
-    def scorer_draw(scr, clr, font):
-        """"функция отрисовки очков игрока в поле score
-            функция принимает три параметра: количество очков, цвет текста и шрифт текста
-            функция выводит на экран в нужной ячейке количество очков заданым цветом и шрифтом"""
-        Text = font.render(str(scr), True, clr)
-        TextRect = Text.get_rect()
-        TextRect.center = (290 / 405 * width, 45 / 630 * height)
-        screen.blit(Text, TextRect)
-
-
-    def lvlup_draw(lvl, clr, font):
-        """"функция отрисовки уровня игрока в поле lvl
-            функция принимает три параметра: уровень игрока, цвет текста и шрифт текста
-            функция выводит на экран в нужной ячейке уровень игрока заданым цветом и шрифтом"""
-        Text = font.render(str(lvl), True, clr)
-        TextRect = Text.get_rect()
-        TextRect.center = (140 / 405 * width, 460 / 630 * height)
-        screen.blit(Text, TextRect)
-
-
-    def trt_draw(trt, clr, font):
-        """"функция отрисовки параметра trt в поле TRT
-            функция принимает три параметра: процент линий зачищеных тетрисом(trt), цвет текста и шрифт текста
-            функция выводит на экран в нужной ячейке показатель trt заданым цветом и шрифтом"""
-        Text = font.render(str(trt), True, clr)
-        TextRect = Text.get_rect()
-        TextRect.center = (128 / 405 * width, 530 / 630 * height)
-        screen.blit(Text, TextRect)
-
-
-    def line_draw(line, clr, font):
-        """"функция отрисовки количества линий зачищеных игроком (или тетрисом) в поле LINE
-            функция принимает три параметра: количества линий зачищеных игроком, цвет текста и шрифт текста
-            функция выводит на экран в нужной ячейке количества линий зачищеных игроком заданым цветом и шрифтом"""
-        Text = font.render(str(line), True, clr)
-        TextRect = Text.get_rect()
-        TextRect.center = (235 / 405 * width, 105 / 630 * height)
-        screen.blit(Text, TextRect)
-
-
-    def nick_name(nn, clr, font):
-        """"функция отрисовки никнейма в поле
-            функция принимает три параметра: никнейм, цвет текста и шрифт текста
-            функция выводит на экран в нужной ячейке никнейм заданым цветом и шрифтом"""
-        Text = font.render(str(nn), True, clr)
-        TextRect = Text.get_rect()
-        TextRect.center = (290 / 405 * width, 600 / 630 * height)
-        screen.blit(Text, TextRect)
-
-
-    def drawer():
-        """"функция отрисовки игрового поля"""
-        # feild
-        rect(screen, clr1, (180 / 405 * width, 125 / 630 * height, 220 / 405 * width, 446 / 630 * height), 5)
-        rect(screen, clr2, (182 / 405 * width, 129 / 630 * height, 216 / 405 * width, 440 / 630 * height), 2)
-        rect(screen, clr2, (181 / 405 * width, 126 / 630 * height, 218 / 405 * width, 444 / 630 * height), 1)
-        # LINE
-        text1 = font1.render('LINE', True, clr3)
-        textRect1 = text1.get_rect()
-        textRect1.center = (234 / 405 * width, 85 / 630 * height)
-        screen.blit(text1, textRect1)
-        rect(screen, clr1, (180 / 405 * width, 70 / 630 * height, 108 / 405 * width, 52.5 / 630 * height), 5)
-        rect(screen, clr2, (182 / 405 * width, 73 / 630 * height, (108 - x1) / 405 * width, (52.5 - y1) / 630 * height), 2)
-        rect(screen, clr2, (181 / 405 * width, 71 / 630 * height, (108 - x2) / 405 * width, (52.5 - y2) / 630 * height), 1)
-        # next figure
-        rect(screen, clr1, (291 / 405 * width, 70 / 630 * height, 108 / 405 * width, 52.5 / 630 * height), 5)
-        rect(screen, clr2, (293 / 405 * width, 73 / 630 * height, (108 - x1) / 405 * width, (52.5 - y1) / 630 * height), 2)
-        rect(screen, clr2, (292 / 405 * width, 71 / 630 * height, (108 - x2) / 405 * width, (52.5 - y2) / 630 * height), 1)
-        # score
-        text1 = font1.render('SCORE', True, clr3)
-        textRect1 = text1.get_rect()
-        textRect1.center = (290 / 405 * width, 20 / 630 * height)
-        screen.blit(text1, textRect1)
-        rect(screen, clr1, (185 / 405 * width, 5 / 630 * height, 210 / 405 * width, 62.5 / 630 * height), 5)
-        rect(screen, clr2, (187 / 405 * width, 8 / 630 * height, (210 - x1) / 405 * width, (62.5 - y1) / 630 * height), 2)
-        rect(screen, clr2, (186 / 405 * width, 6 / 630 * height, (210 - x2) / 405 * width, (62.5 - y2) / 630 * height), 1)
-        # level
-        text1 = font2.render('LV', True, clr3)
-        textRect1 = text1.get_rect()
-        textRect1.center = (140 / 405 * width, 437 / 630 * height)
-        screen.blit(text1, textRect1)
-        rect(screen, clr1, (105 / 405 * width, 420 / 630 * height, 70 / 405 * width, 60 / 630 * height), 5)
-        rect(screen, clr2, (107 / 405 * width, 424 / 630 * height, (70 - x1) / 405 * width, (60 - y1) / 630 * height), 2)
-        rect(screen, clr2, (106 / 405 * width, 422 / 630 * height, (70 - x2) / 405 * width, (60 - y2) / 630 * height), 1)
-        # TRT
-        text1 = font2.render('TRT', True, clr3)
-        textRect1 = text1.get_rect()
-        textRect1.center = (127.5 / 405 * width, 502 / 630 * height)
-        screen.blit(text1, textRect1)
-        rect(screen, clr1, (80 / 405 * width, 485 / 630 * height, 95 / 405 * width, 70 / 630 * height), 5)
-        rect(screen, clr2, (83 / 405 * width, 488 / 630 * height, (95 - x1) / 405 * width, (70 - y1) / 630 * height), 2)
-        rect(screen, clr2, (81 / 405 * width, 486 / 630 * height, (95 - x2) / 405 * width, (70 - y2) / 630 * height), 1)
-        # Nickname
-        rect(screen, clr1, (180 / 405 * width, 576 / 630 * height, 220 / 405 * width, 49 / 630 * height), 5)
-        rect(screen, clr2, (182 / 405 * width, 579 / 630 * height, (220 - x1) / 405 * width, (49 - y1) / 630 * height), 2)
-        rect(screen, clr2, (181 / 405 * width, 577 / 630 * height, (220 - x2) / 405 * width, (49 - y2) / 630 * height), 1)
-        # Flag
-        screen.blit(fopf, (95 / 405 * width, 565 / 630 * height))
-        rect(screen, clr1, (80 / 405 * width, 560 / 630 * height, 95 / 405 * width, 64 / 630 * height), 5)
-        rect(screen, clr2, (83 / 405 * width, 563 / 630 * height, (95 - x1) / 405 * width, (63 - y1) / 630 * height), 2)
-        rect(screen, clr2, (81 / 405 * width, 561 / 630 * height, (95 - x2) / 405 * width, (63 - y2) / 630 * height), 1)
-
-
     def is_bad_column(A):
+        """проверяет строку на полную заполненость"""
         column_counter = 0
         column_trigger = True
         column_set = set()
@@ -881,13 +757,12 @@ def start(LVL, nick_n):
                 column_trigger = True
         return column_counter, column_set
 
-
     def fix_bad_column(A, B):
-        for elem in B:
+        """ изменяет collision list """
+        for element in B:
             for i in range(1, len(A) - 1):
-                A[i][elem] = 0
+                A[i][element] = 0
         return A
-
 
     del_triger = 0
     nfl_t = 0
@@ -902,7 +777,6 @@ def start(LVL, nick_n):
         for j in range(len(collision_list[i])):
             if j == len(collision_list[i]) - 4 or i == 0 or i == len(collision_list) - 1:
                 collision_list[i][j] = 1
-    fast_move_down_trigger = False
     fast_move_down_tick = 0
     fast_move_left_tick = 0
     fast_move_right_tick = 0
@@ -910,7 +784,6 @@ def start(LVL, nick_n):
     t1 = 0
     del_trig_cnt = 0
     game_over_trig = 0
-    pause_trigger = False
     while not finished:
         for i in range(1, 10):
             if collision_list[i][-1] == 1:
@@ -941,7 +814,7 @@ def start(LVL, nick_n):
         clock.tick(FPS)
         time_counter += 1
         level_color = (LVL - 1) % len(COLORS)
-        LVL = int(Line / 5) + LVL
+        LVL = int(Line / 5) + lvl
         if LVL <= 15:
             lvl_speed = 17 - LVL
         else:
@@ -951,14 +824,14 @@ def start(LVL, nick_n):
         if time_counter == 20:
             current_type = choice(types)
             if current_type == 'square':
-                figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
-                next_figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
+                figure_list.append([Figures('square', randint(0, 8)), randint(0, 2)])
+                next_figure_list.append([Figures('square', randint(0, 8)), randint(0, 2)])
             elif current_type == 'stick':
-                figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
-                next_figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
+                figure_list.append([Figures('stick', randint(0, 6)), randint(0, 2)])
+                next_figure_list.append([Figures('stick', randint(0, 6)), randint(0, 2)])
             else:
-                figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
-                next_figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
+                figure_list.append([Figures(current_type, randint(0, 7)), randint(0, 2)])
+                next_figure_list.append([Figures(current_type, randint(0, 7)), randint(0, 2)])
         if time_counter % lvl_speed == 0:
             for fig in figure_list:
                 move_trigger = True
@@ -987,13 +860,13 @@ def start(LVL, nick_n):
                     current_type = choice(types)
                     if current_type == 'square':
                         figure_list.append(next_figure_list[0])
-                        next_figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
+                        next_figure_list.append([Figures('square', randint(0, 8)), randint(0, 2)])
                     elif current_type == 'stick':
                         figure_list.append(next_figure_list[0])
-                        next_figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
+                        next_figure_list.append([Figures('stick', randint(0, 6)), randint(0, 2)])
                     else:
                         figure_list.append(next_figure_list[0])
-                        next_figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
+                        next_figure_list.append([Figures(current_type, randint(0, 7)), randint(0, 2)])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 finished = True
@@ -1066,6 +939,8 @@ def start(LVL, nick_n):
                     if square[1] == full_string:
                         delete_full_string_list.append([square[0], square[1]])
                         del_triger = 1
+                        pygame.mixer.music.load(File)
+                        pygame.mixer.music.play()
         Line += int(len(delete_full_string_list) / 10)
         if len(delete_full_string_list) == 10:
             score += 760
@@ -1076,6 +951,7 @@ def start(LVL, nick_n):
         elif len(delete_full_string_list) == 40:
             score += 22800
             trt_line += 4
+            pygame.mixer.music.load(file)
             pygame.mixer.music.play()
         for i in range(len(delete_full_string_list)):
             pops = 0
@@ -1312,5 +1188,4 @@ def start(LVL, nick_n):
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_ESCAPE:
                         finished = False
-    print('Huy')
     pygame.quit()
