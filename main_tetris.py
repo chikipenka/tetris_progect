@@ -1,10 +1,10 @@
 import time
+from pathlib import Path
 from random import *
 
 import keyboard
 import pygame
 from pygame.draw import *
-from pathlib import Path
 
 pygame.init()
 FPS = 30
@@ -13,6 +13,9 @@ pygame.font.init()
 # check whether font is initialized
 # or not
 pygame.font.get_init()
+# image
+img = pygame.image.load('gameover.jpg')
+fopf = pygame.image.load('flag.jpg')
 # display window parameters
 width = 400
 height = 600
@@ -23,9 +26,11 @@ y1 = 6
 y2 = 2
 # variable texts (start value)
 score = 0
-LVL = 0
+lvl0 = 1
+LVL = lvl0
 TRT = 0
 Line = 0
+trt_score = 0
 # Nickname
 print("Please enter your nickname:")
 nick_n = 'huy'
@@ -51,7 +56,7 @@ PINK = (245, 125, 245)
 GREEN = (0, 255, 26)
 FGREN = (35, 185, 105)
 MALINA = (185, 35, 130)
-GREY = (47,79,79)
+GREY = (47, 79, 79)
 
 COLORS = [[BLUE, RED], [PURPLE, DPURPLE], [RED, YELLOW], [BLUWUE, BLUE], [GREN, GREENY], [PURPLE, PINK], [BLUE, GREEN],
           [MALINA, FGREN]]
@@ -65,8 +70,9 @@ screen.fill((15, 10, 30))
 # and size of the font
 font1 = pygame.font.SysFont("Courier New", 24, bold=True)
 font2 = pygame.font.SysFont("Courier New", 28, bold=True)
+font3 = pygame.font.SysFont("Courier New", 54, bold=True)
 
-#menu
+# menu
 path = Path('dog.jpg')
 dog_surf = pygame.image.load(path)
 dog_surf = pygame.transform.scale(dog_surf, (400, 600))
@@ -75,31 +81,33 @@ dog_rect = dog_surf.get_rect(
 
 buttons_list = []
 a = 120
-c = int(a/2)
+c = int(a / 2)
 d = 5
-width2 = int(width/2)
-height2 = int(height/2)
-buttons_list.append(('start', (width2-c, height2, a, c), DPURPLE, PURPLE))
-buttons_list.append(('quit', ((width2)-c, height2 + a, a, c), DPURPLE, PURPLE))
+width2 = int(width / 2)
+height2 = int(height / 2)
+buttons_list.append(('start', (width2 - c, height2, a, c), DPURPLE, PURPLE))
+buttons_list.append(('quit', ((width2) - c, height2 + a, a, c), DPURPLE, PURPLE))
+
 
 def draw_button(lict, mouz):
     for but in lict:
         if dead_inside(but[1], mouz):
             pygame.draw.rect(screen, but[3], but[1])
-            pygame.draw.rect(screen, WHITE, (but[1][0]-d, but[1][1] - d, a+2*d, c+2*d), d)
+            pygame.draw.rect(screen, WHITE, (but[1][0] - d, but[1][1] - d, a + 2 * d, c + 2 * d), d)
         else:
             pygame.draw.rect(screen, but[2], but[1])
             pygame.draw.rect(screen, WHITE, (but[1][0] - d, but[1][1] - d, a + 2 * d, c + 2 * d), d)
         font = pygame.font.SysFont('lobster', 55)
         text = font.render(but[0], False, (0, 0, 0))
 
-        screen.blit(text, (but[1][0]+a/8, but[1][1]+a/10))
+        screen.blit(text, (but[1][0] + a / 8, but[1][1] + a / 10))
 
 
 def dead_inside(tup, mouz):
     if tup[0] < mouz[0] < tup[0] + tup[2] and tup[1] < mouz[1] < tup[1] + tup[3]:
         return True
     return False
+
 
 class figures:
     def __init__(self, type, left_side):
@@ -161,7 +169,7 @@ class figures:
 
 
 def rotate():
-    if event.key == pygame.K_n:
+    if event.key == pygame.K_d:
         right_rotate_trigger = True
         if figure_list[-1][0].type == 'stick':
             if figure_list[-1][0].orientation % 4 == 1:
@@ -395,7 +403,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
                     figure_list[-1][0].coordinates[0] = [t[0] + 1, t[1] + 1]
             elif figure_list[-1][0].orientation % 4 == 1:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 3][
+                if collision_list[figure_list[-1][0].coordinates[1][0]][
                     figure_list[-1][0].coordinates[1][1]] == 1:
                     right_rotate_trigger = False
                 if right_rotate_trigger:
@@ -405,7 +413,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[0]
                     figure_list[-1][0].coordinates[0] = [t[0] - 1, t[1] + 1]
 
-    elif event.key == pygame.K_m:
+    elif event.key == pygame.K_s:
         # вращение против часовой стрелки
         left_rotate_trigger = True
         if figure_list[-1][0].type == 'stick':
@@ -622,7 +630,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[2]
                     figure_list[-1][0].coordinates[2] = [t[0] + 1, t[1] - 1]
             elif figure_list[-1][0].orientation % 4 == 1:
-                if collision_list[figure_list[-1][0].coordinates[1][0] + 1][
+                if collision_list[figure_list[-1][0].coordinates[1][0]][
                     figure_list[-1][0].coordinates[1][1]] == 1:
                     left_rotate_trigger = False
                 if left_rotate_trigger:
@@ -652,7 +660,7 @@ def rotate():
                     figure_list[-1][0].coordinates[3] = figure_list[-1][0].coordinates[2]
                     figure_list[-1][0].coordinates[2] = [t[0] + 1, t[1] + 1]
 
-    if event.key == pygame.K_m or event.key == pygame.K_n:
+    if event.key == pygame.K_s or event.key == pygame.K_d:
         left_rotate_trigger = True
         if figure_list[-1][0].type == 'left_z_figure':
             if figure_list[-1][0].orientation % 2 == 0:
@@ -849,6 +857,7 @@ def drawer():
     rect(screen, clr2, (182 / 405 * width, 579 / 630 * height, (220 - x1) / 405 * width, (49 - y1) / 630 * height), 2)
     rect(screen, clr2, (181 / 405 * width, 577 / 630 * height, (220 - x2) / 405 * width, (49 - y2) / 630 * height), 1)
     # Flag
+    screen.blit(fopf, (95 / 405 * width, 565 / 630 * height))
     rect(screen, clr1, (80 / 405 * width, 560 / 630 * height, 95 / 405 * width, 64 / 630 * height), 5)
     rect(screen, clr2, (83 / 405 * width, 563 / 630 * height, (95 - x1) / 405 * width, (63 - y1) / 630 * height), 2)
     rect(screen, clr2, (81 / 405 * width, 561 / 630 * height, (95 - x2) / 405 * width, (63 - y2) / 630 * height), 1)
@@ -877,7 +886,10 @@ def fix_bad_column(A, B):
     return A
 
 
+del_triger = 0
+nfl_t = 0
 figure_list = list()
+next_figure_list = list()
 static_figure_list = list()
 clock = pygame.time.Clock()
 finished = False
@@ -887,15 +899,35 @@ for i in range(len(collision_list)):
     for j in range(len(collision_list[i])):
         if j == len(collision_list[i]) - 4 or i == 0 or i == len(collision_list) - 1:
             collision_list[i][j] = 1
-for i in range(len(collision_list)):
-    print(collision_list[i])
-print(collision_list[0][12])
 fast_move_down_trigger = False
 fast_move_down_tick = 0
 fast_move_left_tick = 0
 fast_move_right_tick = 0
 previous_statick_figure_list_len = 0
+t1 = 0
+del_trig_cnt = 0
+game_over_trig = 0
+pause_trigger = False
 while not finished:
+    for i in range(1, 10):
+        if collision_list[i][-1] == 1:
+            finished = True
+            game_over_trig = 1
+    if del_triger == 1:
+        del_trig_cnt += 1
+        if del_trig_cnt == 1:
+            t1 = time.time()
+            rect(screen, (255, 255, 255),
+                 (180 / 405 * width, 125 / 630 * height, 220 / 405 * width, 446 / 630 * height))
+        else:
+            rect(screen, (255, 255, 255),
+                 (180 / 405 * width, 125 / 630 * height, 220 / 405 * width, 446 / 630 * height))
+    if 0.05 < (time.time() - t1) < 0.08 or (time.time() - t1) > 0.13:
+        del_triger = 0
+    else:
+        del_triger = 1
+    if (time.time() - t1) > 0.13:
+        del_trig_cnt = 0
     current_statick_figure_list_len = len(static_figure_list)
     drawer()
     scorer_draw(score, clr3, font1)
@@ -905,23 +937,37 @@ while not finished:
     nick_name(nick_n, clr3, font1)
     clock.tick(FPS)
     time_counter += 1
-    level_color = 1
+    level_color = (LVL - 1) % len(COLORS)
+    LVL = int(Line / 5) + lvl0
+    if LVL <= 15:
+        lvl_speed = 17 - LVL
+    else:
+        lvl_speed = 2
+    if Line != 0:
+        TRT = int(trt_score / score * 100)
     if time_counter == 20:
         current_type = choice(types)
         if current_type == 'square':
             figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
+            next_figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
         elif current_type == 'stick':
             figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
+            next_figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
         else:
             figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
-    if time_counter % 10 == 0:
+            next_figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
+    if time_counter % lvl_speed == 0:
         for fig in figure_list:
             move_trigger = True
             add_trigger = False
             touch_time = 0
+            if nfl_t > 0:
+                next_figure_list.remove(fig)
+                nfl_t = 0
             for square in fig[0].coordinates:
                 if collision_list[square[0] + 1][square[1] + 1] == 1:
                     move_trigger = False
+                    nfl_t = 1
             if move_trigger:
                 fig[0].__move__()
             else:
@@ -937,11 +983,14 @@ while not finished:
                     pass
                 current_type = choice(types)
                 if current_type == 'square':
-                    figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
+                    figure_list.append(next_figure_list[0])
+                    next_figure_list.append([figures('square', randint(0, 8)), randint(0, 2)])
                 elif current_type == 'stick':
-                    figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
+                    figure_list.append(next_figure_list[0])
+                    next_figure_list.append([figures('stick', randint(0, 6)), randint(0, 2)])
                 else:
-                    figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
+                    figure_list.append(next_figure_list[0])
+                    next_figure_list.append([figures(current_type, randint(0, 7)), randint(0, 2)])
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finished = True
@@ -987,7 +1036,7 @@ while not finished:
     if previous_statick_figure_list_len != current_statick_figure_list_len:
         fast_move_left_tick = time.time()
     if keyboard.is_pressed('left'):
-        if time.time() - fast_move_left_tick > 0.2 and fast_move_left_tick != 0:
+        if time.time() - fast_move_left_tick > 0.1 and fast_move_left_tick != 0:
             move_down_trigger2 = True
             for square in figure_list[-1][0].coordinates:
                 if collision_list[square[0]][square[1]] == 1:
@@ -997,7 +1046,7 @@ while not finished:
     if previous_statick_figure_list_len != current_statick_figure_list_len:
         fast_move_right_tick = time.time()
     if keyboard.is_pressed('right'):
-        if time.time() - fast_move_right_tick > 0.2 and fast_move_right_tick != 0:
+        if time.time() - fast_move_right_tick > 0.1 and fast_move_right_tick != 0:
             move_down_trigger2 = True
             for square in figure_list[-1][0].coordinates:
                 if collision_list[square[0] + 2][square[1]] == 1:
@@ -1013,6 +1062,17 @@ while not finished:
             for full_string in full_string_set:
                 if square[1] == full_string:
                     delete_full_string_list.append([square[0], square[1]])
+                    del_triger = 1
+    Line += int(len(delete_full_string_list) / 10)
+    if len(delete_full_string_list) == 10:
+        score += 760
+    elif len(delete_full_string_list) == 20:
+        score += 1900
+    elif len(delete_full_string_list) == 30:
+        score += 5700
+    elif len(delete_full_string_list) == 40:
+        score += 22800
+        trt_score += 22800
     for i in range(len(delete_full_string_list)):
         pops = 0
         for fig in static_figure_list:
@@ -1023,20 +1083,180 @@ while not finished:
                     fig[0].coordinates.pop(j)
                     pops += 1
     fix_bad_column(collision_list, full_string_set)
+
+    full_string_list = list()
+    for elem in full_string_set:
+        full_string_list.append(elem)
     if len(full_string_set) > 0:
-        print(full_string_counter)
-        highest_full_string = min(full_string_set)
-        for i in range(len(static_figure_list)):
-            for square in static_figure_list[i][0].coordinates:
-                if square[1] < highest_full_string:
-                    square[1] += full_string_counter
-        for j in range(19, -1, -1):
-            if j >= highest_full_string:
-                for i in range(1, len(collision_list) - 1):
-                        print(j, highest_full_string)
-                        collision_list[i][j + 1] = 1
-                        collision_list[i][j] = 0
+        print(full_string_list)
+    full_string_list.sort()
+    for i in range(len(full_string_list)):
+        for j in range(len(static_figure_list)):
+            for square in static_figure_list[j][0].coordinates:
+                if square[1] < full_string_list[i]:
+                    square[1] += 1
+    collision_list = [[0] * 24 for i in range(12)]
+    for i in range(len(collision_list)):
+        for j in range(len(collision_list[i])):
+            if j == len(collision_list[i]) - 4 or i == 0 or i == len(collision_list) - 1:
+                collision_list[i][j] = 1
+    for i in range(len(static_figure_list)):
+        for square in static_figure_list[i][0].coordinates:
+            collision_list[square[0] + 1][square[1]] = 1
     full_string_set = set()
+    if len(next_figure_list) != 0:
+        next_square_side = int(square_side * 0.8)
+        next_figure = next_figure_list[0]
+        x_0_next = 296 / 405 * width
+        y_0_next = 75 / 630 * height
+        width_next = 98 / 405 * width
+        height_next = 42.5 / 630 * height
+        if next_figure[0].type == 't_figure':
+            middle_x = width_next / 2 + x_0_next - next_square_side / 2
+            left_x = middle_x - next_square_side
+            right_x = middle_x + next_square_side
+            top_y = height_next / 2 + y_0_next - next_square_side
+            bottom_y = height_next / 2 + y_0_next
+            if next_figure[1] == 0:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_x, bottom_y, next_square_side, level_color, 0)
+            elif next_figure[1] == 1:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_x, bottom_y, next_square_side, level_color, 1)
+            else:
+                kvadratic_bigblik(left_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(right_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_x, bottom_y, next_square_side, level_color)
+        if next_figure[0].type == 'left_l_figure':
+            middle_x = width_next / 2 + x_0_next - next_square_side / 2
+            left_x = middle_x - next_square_side
+            right_x = middle_x + next_square_side
+            top_y = height_next / 2 + y_0_next - next_square_side
+            bottom_y = height_next / 2 + y_0_next
+            if next_figure[1] == 0:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(right_x, bottom_y, next_square_side, level_color, 0)
+            elif next_figure[1] == 1:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(right_x, bottom_y, next_square_side, level_color, 1)
+            else:
+                kvadratic_bigblik(left_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(right_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(right_x, bottom_y, next_square_side, level_color)
+        if next_figure[0].type == 'right_l_figure':
+            middle_x = width_next / 2 + x_0_next - next_square_side / 2
+            left_x = middle_x - next_square_side
+            right_x = middle_x + next_square_side
+            top_y = height_next / 2 + y_0_next - next_square_side
+            bottom_y = height_next / 2 + y_0_next
+            if next_figure[1] == 0:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(left_x, bottom_y, next_square_side, level_color, 0)
+            elif next_figure[1] == 1:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(left_x, bottom_y, next_square_side, level_color, 1)
+            else:
+                kvadratic_bigblik(left_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(right_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(left_x, bottom_y, next_square_side, level_color)
+        if next_figure[0].type == 'right_z_figure':
+            middle_x = width_next / 2 + x_0_next - next_square_side / 2
+            left_x = middle_x - next_square_side
+            right_x = middle_x + next_square_side
+            top_y = height_next / 2 + y_0_next - next_square_side
+            bottom_y = height_next / 2 + y_0_next
+            if next_figure[1] == 0:
+                kvadratic_blik(left_x, bottom_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_x, bottom_y, next_square_side, level_color, 0)
+            elif next_figure[1] == 1:
+                kvadratic_blik(left_x, bottom_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_x, bottom_y, next_square_side, level_color, 1)
+            else:
+                kvadratic_bigblik(left_x, bottom_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(right_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_x, bottom_y, next_square_side, level_color)
+        if next_figure[0].type == 'left_z_figure':
+            middle_x = width_next / 2 + x_0_next - next_square_side / 2
+            left_x = middle_x - next_square_side
+            right_x = middle_x + next_square_side
+            top_y = height_next / 2 + y_0_next - next_square_side
+            bottom_y = height_next / 2 + y_0_next
+            if next_figure[1] == 0:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(right_x, bottom_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_x, bottom_y, next_square_side, level_color, 0)
+            elif next_figure[1] == 1:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(right_x, bottom_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_x, bottom_y, next_square_side, level_color, 1)
+            else:
+                kvadratic_bigblik(left_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(right_x, bottom_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_x, bottom_y, next_square_side, level_color)
+        if next_figure[0].type == 'stick':
+            middle_left_x = width_next / 2 + x_0_next - next_square_side
+            left_x = middle_left_x - next_square_side
+            middle_right_x = middle_left_x + next_square_side
+            right_x = middle_left_x + 2 * next_square_side
+            top_y = height_next / 2 + y_0_next - next_square_side / 2
+            if next_figure[1] == 0:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_left_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_right_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 0)
+            elif next_figure[1] == 1:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_left_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_right_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 1)
+            else:
+                kvadratic_bigblik(left_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_left_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_right_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(right_x, top_y, next_square_side, level_color)
+        if next_figure[0].type == 'square':
+            middle_left_x = width_next / 2 + x_0_next - next_square_side
+            middle_right_x = middle_left_x + next_square_side
+            top_y = height_next / 2 + y_0_next - next_square_side
+            bottom_y = height_next / 2 + y_0_next
+            if next_figure[1] == 0:
+                kvadratic_blik(middle_left_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_right_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_left_x, bottom_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_right_x, bottom_y, next_square_side, level_color, 0)
+            elif next_figure[1] == 1:
+                kvadratic_blik(middle_left_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_right_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_left_x, bottom_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_right_x, bottom_y, next_square_side, level_color, 1)
+            else:
+                kvadratic_bigblik(middle_left_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_right_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_left_x, bottom_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_right_x, bottom_y, next_square_side, level_color)
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
@@ -1062,5 +1282,31 @@ while not finished:
     previous_statick_figure_list_len = current_statick_figure_list_len
     pygame.display.update()
     screen.fill((15, 10, 30))
+if game_over_trig == 1:
+    while finished:
+        screen.blit(img, (0, 0))
+        text1 = font3.render('GAME OVER', True, (0, 0, 0))
+        textRect1 = text1.get_rect()
+        textRect1.center = (0.5 * width, 0.3 * height)
+        screen.blit(text1, textRect1)
+        text1 = font1.render('играл', True, (255, 255, 255))
+        textRect1 = text1.get_rect()
+        textRect1.center = (0.15 * width, 0.75 * height)
+        screen.blit(text1, textRect1)
+        text1 = font1.render('и', True, (0, 0, 0))
+        textRect1 = text1.get_rect()
+        textRect1.center = (0.515 * width, 0.75 * height)
+        screen.blit(text1, textRect1)
+        text1 = font1.render('проиграл', True, (255, 255, 255))
+        textRect1 = text1.get_rect()
+        textRect1.center = (0.85 * width, 0.75 * height)
+        screen.blit(text1, textRect1)
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                finished = False
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_ESCAPE:
+                    finished = False
 print('Huy')
 pygame.quit()
