@@ -1211,6 +1211,47 @@ while not finished:
                 kvadratic_bigblik(middle_x, top_y, next_square_side, level_color)
                 kvadratic_bigblik(right_x, bottom_y, next_square_side, level_color)
                 kvadratic_bigblik(middle_x, bottom_y, next_square_side, level_color)
+        if next_figure[0].type == 'stick':
+            middle_left_x = width_next / 2 + x_0_next - next_square_side
+            left_x = middle_left_x - next_square_side
+            middle_right_x = middle_left_x + next_square_side
+            right_x = middle_left_x + 2 * next_square_side
+            top_y = height_next / 2 + y_0_next - next_square_side / 2
+            if next_figure[1] == 0:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_left_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_right_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 0)
+            elif next_figure[1] == 1:
+                kvadratic_blik(left_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_left_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_right_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(right_x, top_y, next_square_side, level_color, 1)
+            else:
+                kvadratic_bigblik(left_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_left_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_right_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(right_x, top_y, next_square_side, level_color)
+        if next_figure[0].type == 'square':
+            middle_left_x = width_next / 2 + x_0_next - next_square_side
+            middle_right_x = middle_left_x + next_square_side
+            top_y = height_next / 2 + y_0_next - next_square_side
+            bottom_y = height_next / 2 + y_0_next
+            if next_figure[1] == 0:
+                kvadratic_blik(middle_left_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_right_x, top_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_left_x, bottom_y, next_square_side, level_color, 0)
+                kvadratic_blik(middle_right_x, bottom_y, next_square_side, level_color, 0)
+            elif next_figure[1] == 1:
+                kvadratic_blik(middle_left_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_right_x, top_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_left_x, bottom_y, next_square_side, level_color, 1)
+                kvadratic_blik(middle_right_x, bottom_y, next_square_side, level_color, 1)
+            else:
+                kvadratic_bigblik(middle_left_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_right_x, top_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_left_x, bottom_y, next_square_side, level_color)
+                kvadratic_bigblik(middle_right_x, bottom_y, next_square_side, level_color)
     for fig in figure_list:
         for i in range(len(fig[0].coordinates)):
             x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
