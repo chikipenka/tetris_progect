@@ -3,6 +3,7 @@ from pathlib import Path
 
 path = Path('dog.jpg')
 
+
 BLUE = (65, 105, 225)
 RED = (139, 0, 0)
 BLACK = (0, 0, 0)
