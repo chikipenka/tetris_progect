@@ -931,6 +931,7 @@ def start(lvl, nick_n):
                     figure_list[-1][0].__move_right__()
         # for i in range(len(collision_list)):
         # print(collision_list[i])
+        """удаление собранных линий"""
         full_string_counter, full_string_set = is_bad_column(collision_list)
         delete_full_string_list = list()
         for fig in static_figure_list:
@@ -941,6 +942,7 @@ def start(lvl, nick_n):
                         del_triger = 1
                         pygame.mixer.music.load(File)
                         pygame.mixer.music.play()
+        """изменение параметров после удаления"""
         Line += int(len(delete_full_string_list) / 10)
         if len(delete_full_string_list) == 10:
             score += 760
@@ -984,6 +986,7 @@ def start(lvl, nick_n):
             for square in static_figure_list[i][0].coordinates:
                 collision_list[square[0] + 1][square[1]] = 1
         full_string_set = set()
+        """вывод в специальное окошко следующей фигуры"""
         if len(next_figure_list) != 0:
             next_square_side = int(square_side * 0.8)
             next_figure = next_figure_list[0]
@@ -1137,6 +1140,7 @@ def start(lvl, nick_n):
                     kvadratic_bigblik(middle_right_x, top_y, next_square_side, level_color)
                     kvadratic_bigblik(middle_left_x, bottom_y, next_square_side, level_color)
                     kvadratic_bigblik(middle_right_x, bottom_y, next_square_side, level_color)
+        """"отрисовка движущихся фигур"""
         for fig in figure_list:
             for i in range(len(fig[0].coordinates)):
                 x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
@@ -1148,6 +1152,7 @@ def start(lvl, nick_n):
                         kvadratic_blik(x_for_each_square, y_for_each_square, square_side, level_color, 1)
                     else:
                         kvadratic_bigblik(x_for_each_square, y_for_each_square, square_side, level_color)
+        """отрисовка статических фигур"""
         for fig in static_figure_list:
             for i in range(len(fig[0].coordinates)):
                 x_for_each_square, y_for_each_square = kvadratic(fig[0].coordinates[i][0], fig[0].coordinates[i][1],
@@ -1162,6 +1167,7 @@ def start(lvl, nick_n):
         previous_statick_figure_list_len = current_statick_figure_list_len
         pygame.display.update()
         screen.fill((15, 10, 30))
+    """Окно Game Over"""
     if game_over_trig == 1:
         while finished:
             screen.blit(img, (0, 0))
